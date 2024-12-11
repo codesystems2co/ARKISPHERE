@@ -121,8 +121,12 @@ class sh_sale_order(models.Model):
                     
                     if(physical_server):
                         so_server = self.create_so_server(physical_server,self.partner_id.id,_params)
+
                         if(so_server):
                             _order_line.sudo().update({'so_server':so_server})
+
+                            if not self.cloud_provider:
+                            so_server.sale_order.sudo().update({'cloud_provider':int(provider.id)})
 
         return response
 
@@ -225,4 +229,3 @@ class sh_sale_order(models.Model):
             return ssh
         except Exception as e:
             raise ValidationError(str("\n Password: ") + str(physical_server.password) + str("\n ID: ") + str(physical_server.id) + str("\n IP: ") + str(physical_server.ssh_host) + str("\n PORT: ") + str(physical_server.port) + str("\n USER: ") + str(physical_server.user) + str("\n MESSAGE: ") + getattr(e, 'message', repr(e)))
-        
