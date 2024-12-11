@@ -135,6 +135,24 @@ class sh_git_branch(models.Model):
             _git_response = {"error":True, "message":"Could not get branch ("+str(_branch.name)+") for repository ("+str(_repository.name)+") \n\n " + getattr(e, 'message', repr(e))}
             return _git_response
 
+        # compare und update branch repository addons        
+        if len(commits_list) > 0:
+            _logger.warning(':: Checking commits >>>')
+            _branch = self.env["sh.git_branch"].sudo().browse(int(branch_id))
+            last_commit = commits_list[0]
+            _logger.warning(last_commit)
+            if _branch.sha == last_commit['sha']:
+                pass
+            else:                
+                so_server = self.env['so.server'].browse(int(_branch.repository.so_server.id))
+                _physical_server_id = int(so_server.physical_server.id)
+                physical_server = self.env['sh.physical_server'].browse(_physical_server_id)   
+                if(physical_server):
+                    ssh = self.get_ssh(physical_server)
+                    _logger.warning(':: Syncronize branch repository files project >>>')
+                    self.env["sh.git_branch"].sudo().restore_external_project(_branch, ssh)        
+                    _branch.sudo().update({'sha':last_commit['sha']})
+
         return _git_response
     
     def get_branch_commits(self, params):
