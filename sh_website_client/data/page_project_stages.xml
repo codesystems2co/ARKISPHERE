@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>   
+
+    <template id="view_page_my_stages">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container">
+                   <!-- Page Contents -->
+                   <h3><span class="project-for">Stages for </span><span class="project-name"><t t-out="request.env['sh.git_repository'].sudo().get_current_project_name()"/></span></h3>
+                    <div class="my-stages-page">
+                    <br/>
+                        <div class="row">
+                            <!-- Left Column -->
+                            <div class="col-3 sh-column-widgets">
+                                <div class="sh-widget widget-production">
+                                    <div class="row widget-sh-row">
+                                        <i class="fa fa-rocket"></i><span class="widget-sh-title">  PRODUCTION</span>
+                                    </div>
+
+                                    <div class="branches-columned">
+                                        <t t-set="repository_id" t-value="request.env['sh.git_repository'].sudo().get_current_project()"/>
+                                        <t t-set="autor_id" t-value="request.env['res.partner'].sudo().get_current_autor_id()"/>
+                                        
+                                        <div class="row">                                            
+                                            <t t-set="branch" t-value="request.env['sh.git_repository'].sudo().get_repository_branch(repository_id,'main')"/>                                            
+                                            <a t-attf-href="#" class="row-btn row-branch-item row-active" t-att="{'branch_id':branch.id, 'repository_id':repository_id, 'autor_id':autor_id}">
+                                                <span class="widget-sh-branch">  main</span><i class="fa fa-signal"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="sh-widget widget-development">
+                                    <div class="row widget-sh-row">
+                                        <i class="fa fa-sitemap"></i><span class="widget-sh-title">  DEVELOPMENT </span> <span class="widget-sh-branch"></span>
+                                    </div>
+
+                                    <div class="branches-columned">
+
+                                        <t t-set="branches" t-value="request.env['sh.git_repository'].sudo().get_repository_branches(repository_id,'all_development')"/>
+                                        <t t-foreach="branches" t-as="_branch">
+                                            <div class="row">
+                                                <a t-attf-href="#" class="row-btn row-branch-item" t-att="{'branch_id':_branch['id'], 'repository_id':repository_id, 'autor_id':autor_id}">
+                                                    <span class="widget-sh-branch">  <t t-out="_branch['name']"/> </span><i class="fa fa-signal"></i>
+                                                </a>
+                                            </div>
+                                        </t>
+
+                                        <div class="row sh-widget-new-branch  access-right">
+                                            <t t-set="branches" t-value="request.env['sh.git_repository'].sudo().get_repository_branches(repository_id,'all')"/>
+                                            <span class="widget-sh-branch">  New Branch From:</span>
+                                            <select id="from-branches" t-att="{'repository_id':repository_id}">
+                                                <t t-foreach="branches" t-as="_branch">
+                                                    <option  t-attf-value="{{_branch['id']}}"> <t t-out="str(_branch['name'])"/> </option>
+                                                </t>
+                                            </select>
+                                            <input type="text" id="new-referenced-branch" placeholder="Branch Name"/>
+                                            <a t-attf-href="#" id="create_branch_from">Create</a>
+                                            <div class="row-spinner new-branch-spinner">
+                                                <i class="fa fa-spinner"></i> Loading...
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+
+                            <!-- Right Column -->
+                            <div class="col-lg-9">
+                                <div class="sh-middle-row sh-tab-stages">
+                                    <ul class="nav nav-tabs">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" href="#sh-history-tab"><i class="fa fa-history"></i> <span class="widget-sh-title">  HISTORY </span></a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link sh-shell-tab"  href="#sh-shell-tab"><i class="fa fa-terminal"></i> <span class="widget-sh-title">  CODE EDITOR </span></a>
+                                        </li>
+                                        <li class="nav-item access-right">
+                                            <a class="nav-link"  href="#sh-commands-tab"><i class="fa fa-terminal"></i> <span class="widget-sh-title">  COMMANDS </span></a>
+                                        </li>
+                                        <li class="nav-item access-right">
+                                            <a class="nav-link sh-app-logs-tab"  href="#sh-app-logs-tab"><i class="fa fa-list"></i> <span class="widget-sh-title">  LOGS </span></a>
+                                        </li>                                        
+                                        <li class="nav-item access-right">
+                                            <a class="nav-link"  href="#sh-settings-tab"><i class="fa fa-sliders"></i> <span class="widget-sh-title">  SETTINGS </span></a>
+                                        </li>
+                                        <li class="nav-item access-right">
+                                            <a class="nav-link"  href="#sh-backups-tab"><i class="fa fa-database"></i> <span class="widget-sh-title">  </span></a>
+                                        </li>
+                                    </ul>
+
+                                    <div class="tab-content">
+                                        <br/>
+                                        <div class="row btn-connect">
+                                             <a href="#" id="pgadmin" target="_blank"><img src="/sh_website_client/static/images/icon-pgadmin.png"></img></a><input id="_database" type="text" value="" placeholder="database name"/> <input id="_service" type="text" value="" placeholder="addon-name or service"/> <a href='#' id="restart-branch" class="btn btn-primary"><i class="fa fa-refresh"></i></a> <a href='#' id="app-gateway" target="_blank" class="btn btn-success">CONNECT</a><a href='#' id="app-dashboard" target="_blank" class="btn btn-primary" t-att-repository_id='repository_id' title="Server Cluster Administrator"><i class="fa fa-sliders"/></a>
+                                            
+                                        </div>
+                                        <div class="tab-pane active" id="sh-history-tab">
+
+                                            <div class="row-spinner">
+                                                <i class="fa fa-spinner"></i> Loading...
+                                            </div>
+
+                                        </div>
+
+                                        <div class="tab-pane" id="sh-shell-tab">
+                                           
+                                           <div> <img src="/sh_website_client/static/src/img/visual-studio-code-icon.png"/> </div>
+                                           <div> <span>Powered By VS Code</span> </div>
+                                        </div>
+
+                                        <div class="tab-pane" id="sh-app-logs-tab">
+                                            <div class="container">
+                                                <div class="app-logs-container">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="tab-pane  access-right" id="sh-commands-tab">
+                                            <h6>Commands</h6>
+                                            <div class="row">
+                                                <div class="form-group field-command">
+                                                    <input type="text" name="commands" id="commands" class="form-control form-control-sm" placeholder="apt-get install ..." />
+                                                    <button id="save_command" class="btn btn-secondary">Execute</button>
+                                                </div>
+                                            </div>
+                                            <div class="row commands_list">
+                                                <div class="row-spinner">
+                                                    <i class="fa fa-spinner"></i> No records
+                                                </div>
+                                            </div>
+                                        </div>                                        
+
+                                        <div class="tab-pane  access-right" id="sh-settings-tab">
+                                            <div class="container-tab">
+                                                <div class="widget-panel">
+                                                    <h6>Domains</h6>
+                                                    <div class="row">
+                                                        <div class="form-group field-domain-name">
+                                                            <label for="domain_name">Name</label>
+                                                            <input type="text" name="domain_name" id="domain_name" class="form-control form-control-sm" placeholder="domain.com" />
+                                                            <button id="assign_domain" class="btn btn-secondary"><i class="fa fa-globe"/> Assign</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row domains_list">
+                                                        <i class='btn btn-secondary fa fa-trash delete_domain'></i> <select id="domains_list" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="container-tab">
+                                                <div class="widget-panel">
+                                                    <h6>Collaborators</h6>
+                                                    <div class="row">
+                                                        <div class="form-group field-username-collaborator">
+                                                            <label for="username">Username</label>
+                                                            <input type="text" name="username" id="collaborator_username" class="form-control form-control-sm" placeholder="gituser" />
+                                                            <button id="assign_collaborator" class="btn btn-secondary"><i class="fa fa-github"/> Add</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row collaborators_list">
+                                                        <i class='btn btn-secondary fa fa-trash unssign_collaborator'></i> <select id="collaborators_list" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                            </div>                                            
+                                            <div class="container-tab ssl_security">
+                                                
+                                                <div class="widget-panel">
+                                                    <h6>SSL</h6>
+                                                    <div class="row">
+                                                        <div class="form-group field-domain-ssl">
+                                                            <div class="ssl-domain-to-sign">
+                                                                <label for="_domain">Domain</label>
+                                                                <select id="_domain" name="_domain" class="form-control"><option>Select</option></select>
+                                                            </div>
+                                                            <div class="ssl-domain-to-sign-type">
+                                                                <label for="_ssl_type">Type</label>
+                                                                <select id="_ssl_type" name="_ssl_type" class="form-control"><option value="self">Self Signed</option><option value="paid">Paid One</option></select>
+                                                            </div>
+                                                            <br/>
+                                                            <div class="ssl-file">
+                                                                <label for="ssl_cert">Certificate (.pem)</label>
+                                                                <input id="ssl_cert" name="ssl_cert" type="file" class="form-control"></input>
+                                                            </div>
+                                                            <div class="ssl-file">
+                                                                <label for="ssl_cert_key">Certificate Key (.pem)</label>
+                                                                <input id="ssl_cert_key" name="ssl_cert_key" type="file" class="form-control"></input>
+                                                            </div>   
+                                                            <div class="ssl-file">   
+                                                                <br/>                                      
+                                                                <button id="ssl_create" class="btn btn-secondary"><i class="fa fa-shield" /> Sign</button>
+                                                            </div>
+
+                                                            <button id="ssl_create_self_signed" class="btn btn-secondary"><i class="fa fa-shield" /> Sign</button>
+                                                        </div>                                                    
+                                                    </div>                                            
+                                                    <div class="row ssl_domains_list">
+                                                        <div class="row-spinner">
+                                                            <i class="fa fa-spinner"></i> No records
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="container-tab">
+                                                <div class="widget-panel">
+                                                    <h6>Stages</h6>
+                                                    <div class="row">
+                                                        <div class="form-group field-stages-branches">                                                            
+                                                            <select id="github_branches" class="form-control"><option>Select</option></select>
+                                                            <i class='btn btn-secondary fa fa-trash delete_branch'></i> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>  
+                                        </div>
+
+                                        <div class="tab-pane" id="sh-backups-tab">
+                                       
+                                           <div class="panel-buttons">
+                                            <a class="btn btn-primary manual-backup">Backup</a>
+                                            <!--<a class="btn btn-secondary">Restore</a>-->
+                                           </div>    
+                                            <div class="row-spinner">
+                                            <br></br>
+                                                <i class="fa fa-spinner"></i> Loading ...
+                                            </div>                           
+                                           <table class="table sh-backups-table">
+                                            <thead>
+                                                    <tr>                                            
+                                                        <th>
+                                                            Time
+                                                        </th>
+                                                        <th>
+                                                            Branch
+                                                        </th>
+                                                        <th>
+                                                            Type
+                                                        </th>
+                                                        <th>
+                                                            Version
+                                                        </th>
+                                                        <th>
+                                                            Revision
+                                                        </th>
+                                                        <th/>                                                    
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="tbody-revisions">
+                                                    <tr>
+                                                        <td colspan="6">  
+                                                         0 Records
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                           </table>
+                                           <div class="powered-by"> <img src="/sh_website_client/static/src/img/powered-goo.drive.jpg"/> </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>    
+                        </div>                     
+                    </div>                   
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <record id="page_my_stages" model="website.page">
+        <field name="name">Project Stages</field>
+        <field name="website_published">True</field>
+        <field name="url">/project/stages</field>
+        <field name="view_id" ref="view_page_my_stages"/>
+    </record>
+    
+</odoo>

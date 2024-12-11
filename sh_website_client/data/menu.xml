@@ -1,0 +1,22 @@
+<odoo>
+    <data>
+
+        <record id="menu_servers" model="website.menu">
+            <field name="name">All Servers</field>
+            <field name="url">/my/servers</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence" type="int">5</field>
+        </record>    
+
+        <template id="portal_kube_deployer_links" inherit_id="portal.my_account_link" name="Deployer">
+            <xpath expr="//*[@id='o_logout_divider']" position="before">
+                <a href="/my/servers" role="menuitem" class="dropdown-item"><i class="fa fa-fw fa fa-server me-1 small text-primary"/> My Space</a>
+                <!-- Server id lost with direct link
+                <a href="/my/projects" role="menuitem" class="dropdown-item"><i class="fa fa-fw fa-rocket me-1 small text-primary"/> My Projects</a>
+                -->
+                <a href="/foreing/projects" role="menuitem" class="dropdown-item"><i class="fa fa-fw fa-handshake-o me-1 small text-primary"/> Foreing Projects</a>
+            </xpath>
+        </template>
+
+    </data>
+</odoo>

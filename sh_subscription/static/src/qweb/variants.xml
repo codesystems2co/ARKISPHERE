@@ -1,0 +1,13 @@
+<odoo>
+    <data>
+
+        <template id="subscription_variants" inherit_id="website_sale.variants" name="SH Subscription Variants" priority="50">
+            <!--
+            <xpath expr="//ul/t/li/label/div/div/span[last()]/span[last()]" position="after">
+                <span> / month</span>
+            </xpath>
+            -->
+        </template>
+
+    </data>
+</odoo>

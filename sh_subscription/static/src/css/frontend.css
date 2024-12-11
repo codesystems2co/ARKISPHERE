@@ -1,0 +1,22 @@
+button.button-test-connection
+{
+    margin-bottom: 5px;
+}
+.card-footer .row
+{
+    display: flow-root;
+    margin-bottom: 10px;
+}
+.homepage select,.homepage a.btn
+{
+    width: auto!important;
+    display: inline-block;
+}
+.my-servers-page
+{
+    margin-bottom: 20px;
+}
+a[href='/shop']
+{
+    display:none;
+}

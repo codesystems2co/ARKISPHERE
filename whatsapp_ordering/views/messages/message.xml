@@ -1,0 +1,33 @@
+<odoo>
+    <data>
+
+        <record id="meta_message_view" model="ir.ui.view">
+            <field name="name">message.form.meta</field>
+            <field name="model">mail.message</field>
+            <field name="inherit_id" ref="mail.mail_message_view_form"/>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+
+                <field name="subject" position="before">
+                    <field name="meta_is_whatsapp" widget="boolean_toggle"/>
+                    <field name="meta_has_error" widget="boolean_toggle"/>
+                </field>
+
+                <xpath expr="//page[last()]" position="after">
+                    <page string="Whatsapp" invisible='meta_is_whatsapp == False'>
+                        <group>
+                            <field name="meta_message_id" invisible='meta_has_error == True'/>
+                            <field name="meta_error_message" invisible='meta_has_error == False'/>
+                            <field name="meta_error_type" invisible='meta_has_error == False'/>
+                            <field name="meta_error_code" invisible='meta_has_error == False'/>
+                            <field name="meta_ferror_btrace_id" invisible='meta_has_error == False'/>
+                        </group>
+                    </page>
+                </xpath>
+
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

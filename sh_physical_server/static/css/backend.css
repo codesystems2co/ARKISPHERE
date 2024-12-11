@@ -1,0 +1,8 @@
+.kanban-separator-custom
+{
+    margin-bottom: 3px;
+    border-bottom: 1px solid #ccc;
+    padding-top: 13px;
+    font-weight: bold;
+    color: #667;
+}

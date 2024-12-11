@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- form view -->
+        <record id="view_sh_git_repository_form_inherit" model="ir.ui.view">
+            <field name="name">sh_git_repository_form_inherit</field>
+            <field name="model">sh.git_repository</field>
+            <field name="inherit_id" ref="sh_git.view_sh_git_repository_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group/field[last()]" position="after">
+                    <field name="replicas" id="replicas" string="Replicas" readonly="1"/>
+                    <field name="kuber_deploy" id="kuber_deploy" string="Application Deployment"/>
+                </xpath>   
+                <button name='open_repository' position="after">
+                    <button name="kb_open_dashboard" type="object" string=" System Admin &gt;" icon="fa-sliders" class="kanban-button btn-primary"></button>
+                </button> 
+                <xpath expr="//group/field[last()]" position="after">
+                    <field name="kuber_dashboard_token" id="kuber_dashboard_token" invisible="not kuber_dashboard_token"/>
+                </xpath> 
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,2 @@
+"id","name","model_id","group_id","perm_read","perm_write","perm_create","perm_unlink"
+"__export__.ir_model_access_290_b96a90ca","physical server","sh.physical_server","","True","True","True","True"

@@ -1,0 +1,11 @@
+# -*- coding: utf-8 -*-
+from . base import res_company
+from . base import res_partner
+from . messages import template
+from . messages import message
+from . product import product_template
+from . sale import sale_order
+from . payment import payment_transaction
+from . inventory import stock_picking
+from . account import account_move
+from . loyalty import loyalty_card

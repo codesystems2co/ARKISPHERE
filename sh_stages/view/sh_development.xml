@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- tree view -->
+        <record id="view_sh_development_tree" model="ir.ui.view">
+            <field name="name">sh_development_tree</field>
+            <field name="model">sh.development</field>
+            
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <list string="Development">
+                    <field name="name" />
+                </list>
+            </field>
+        </record>
+        <!-- form view -->
+        <record id="view_sh_development_form" model="ir.ui.view">
+            <field name="name">sh_development_form</field>
+            <field name="model">sh.development</field>
+            
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <form string="Development">
+                    <header>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <!--button type="object" name="action_view_detail" class="oe_stat_button" icon="fa-pencil-square-o"-->
+                                <!--field name="detail_count" widget="statinfo" string="Detail(s)"/-->
+                                <!--field name="detail_ids" invisible="1"/-->
+                            <!--/button-->
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only" string="Development"/>
+                            <h1><field name="name"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                            </group>
+                            <group>
+                                <field name="branches" />
+                            </group>
+                        </group>
+                        <notebook>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!-- search -->
+        <record id="view_sh_development_search" model="ir.ui.view">
+            <field name="name">sh_development</field>
+            <field name="model">sh.development</field>
+            <field name="arch" type="xml">
+                <search string="Development">
+
+                    <field name="branches" select="True"/>
+                    <group string="Group By..">
+                        <filter string="Branches" domain="[]" name="group_by_branches" context="{'group_by':'branches'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <!-- kanban , to show image, please add image_small in the model -->
+        <record id="view_sh_development_kanban" model="ir.ui.view" >
+            <field name="name">sh_development</field>
+            <field name="model">sh.development</field>
+            <field name="arch" type="xml">
+                <kanban version="7.0">
+                    <field name="id" />
+                    <field name="branches" />
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click o_kanban_record_has_image_fill">
+                                <div class="oe_kanban_details">
+                                    <h4>
+                                        <a type="open"><field name="name"/></a>
+                                    </h4>
+                                    <ul>
+                                        <li>
+                                            Field1: <field name="name"></field>
+                                        </li>
+                                        <li>
+                                            Field2: <field name="name"></field>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <!-- calendar if a date field exists -->
+        <!-- graph -->
+        <record id="view_sh_development_graph" model="ir.ui.view">
+            <field name="name">sh_development</field>
+            <field name="model">sh.development</field>
+            <field name="arch" type="xml">
+                <graph string="Development" type="bar">
+                    <field name="branches"/>
+                </graph>
+            </field>
+        </record>
+        <!-- action window -->
+        <record id="action_sh_development" model="ir.actions.act_window">
+            <field name="name">Development</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sh.development</field>
+            
+            <field name="view_mode">kanban,list,form,graph</field>
+            <field name="context">{"search_default_fieldname":1}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                Click to add a new Development
+                </p><p>
+                Click the Create button to add a new Development
+                </p>
+            </field>
+        </record>
+
+        <record id="action_sh_git_branch_development" model="ir.actions.act_window">
+            <field name="name">Branches</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sh.git_branch</field>
+            <field name="view_mode">kanban,list,form</field>
+            <field name="context">{"search_default_fieldname":1}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                Click to add a new Branches
+                </p><p>
+                Click the Create button to add a new Branches
+                </p>
+            </field>
+        </record>
+
+        <!--<menuitem id="menu_sh_development" name="Development" parent="sh_stages_top_menu" action="action_sh_development" sequence="3"/>
+        <menuitem id="menu_sh_development_item" name="Stages" parent="menu_sh_development" action="action_sh_development" sequence="0"/>
+        <menuitem id="menu_sh_git_branch_subdev" name="Branches" parent="menu_sh_development" action="action_sh_git_branch_development" sequence="1"/>-->
+    </data>
+</odoo>

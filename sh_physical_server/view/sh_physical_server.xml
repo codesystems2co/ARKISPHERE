@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- tree view -->
+        <record id="view_sh_physical_server_tree" model="ir.ui.view">
+            <field name="name">sh_physical_server_tree</field>
+            <field name="model">sh.physical_server</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <list string="Physical Server">
+                    <field name="name" />
+                    <field name="provider" />
+                    <field name="label" />
+                    <field name="ram_size" />
+                    <field name="disk_size" />
+                    <field name="processor_core" />
+                    <field name="ip" />
+                    <field name="ssh_host" />
+                    <field name="port" />
+                    <field name="user" />
+                    <field name="owner"/>
+                    <field name="is_busy"  widget="boolean_toggle"/>
+                    
+                    <!--<field name="so_server" />-->
+                </list>
+            </field>
+        </record>
+        <!-- form view -->
+        <record id="view_sh_physical_server_form" model="ir.ui.view">
+            <field name="name">sh_physical_server_form</field>
+            <field name="model">sh.physical_server</field>
+            <field name="type">form</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <form string="Physical Server">
+                    <header>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <!--button type="object" name="action_view_detail" class="oe_stat_button" icon="fa-pencil-square-o"-->
+                                <!--field name="detail_count" widget="statinfo" string="Detail(s)"/-->
+                                <!--field name="detail_ids" invisible="1"/-->
+                            <!--/button-->
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only" string="Physical Server Name"/>
+                            <h1><field name="name"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="provider" />
+                                <field name="label" />
+                                <field name="ram_size" />
+                                <field name="disk_size" />
+                                <field name="processor_core" />
+                                <field name="ip" />
+                                <field name="ssh_host" />
+                                <field name="port" />
+                                <field name="user" />
+                                <field name="password" password="True"/>
+                                <field name="is_busy"   widget="boolean_toggle"/>
+                            </group>
+                            <group>
+                                <!--<field name="so_server" />-->
+                                <field name="owner"/>
+                            </group>
+                        </group>
+                        <notebook>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!-- search -->
+        <record id="view_sh_physical_server_search" model="ir.ui.view">
+            <field name="name">sh_physical_server</field>
+            <field name="model">sh.physical_server</field>
+            <field name="arch" type="xml">
+                <search string="Physical Server">
+
+                    <filter string="Name" name="filter_by_name" domain="[('name','=','')]" />
+                    <filter string="Provider" name="filter_by_provider" domain="[('provider','=','')]" />
+                    <filter string="Label" name="filter_by_label" domain="[('label','=','')]" />
+                    <filter string="Ram size" name="filter_by_ram_size" domain="[('ram_size','=','')]" />
+                    <filter string="Disk size" name="filter_by_disk_size" domain="[('disk_size','=','')]" />
+                    <filter string="Ip" name="filter_by_ip" domain="[('ip','=','')]" />
+                    <filter string="User" name="filter_by_user" domain="[('user','=','')]" />
+                    <filter string="Password" name="filter_by_password" domain="[('password','=','')]" />
+                    <filter string="Not Busy" name="filter_by_is_busy" domain="[('is_busy','=',False)]" />
+                    <field name="name" select="True"/>
+                    <field name="provider"  select="True"/>
+                    <field name="label"  select="True"/>                    
+                    <field name="ram_size" select="True"/>
+                    <field name="disk_size" select="True"/>
+                    <field name="processor_core" select="True"/>
+                    <field name="ip" select="True"/>
+                    <field name="ssh_host" />
+                    <field name="port" />
+                    <field name="user" select="True"/>
+                    <field name="is_busy" />
+                    <field name="password" select="True"/>
+                </search>
+            </field>
+        </record>
+        <!-- kanban , to show image, please add image_small in the model -->
+        <record id="view_sh_physical_server_kanban" model="ir.ui.view" >
+            <field name="name">sh_physical_server</field>
+            <field name="model">sh.physical_server</field>
+            <field name="arch" type="xml">
+                <kanban version="7.0">
+                    <field name="id" />
+                    <field name="name" />
+                    <field name="provider"/>
+                    <field name="label"/>
+                    <field name="ram_size" />
+                    <field name="disk_size" />
+                    <field name="processor_core"/>
+                    <field name="ip" />
+                    <field name="user" />
+                    <field name="is_busy" />
+                    <field name="password" password="True"/>
+                    <!--<field name="so_server" />-->
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click o_kanban_record_has_image_fill">
+                                <div class="oe_kanban_details">
+                                    <h4>
+                                        <i class="fa fa-server"></i>  <a type="open"><field name="name"/></a>
+                                    </h4>
+                                    <ul>
+                                        <li title="Label">
+                                           <field name="label"></field>
+                                        </li>    
+                                        <li title="Provider" invisible="provider">
+                                            <i class="fa fa-server"></i>  Provider <field name="provider"/>
+                                        </li>                                 
+                                        <li title="Busy">
+                                            <i class="fa fa-clock"></i> Busy: <field name="is_busy"  widget="boolean_toggle"></field>
+                                        </li>
+                                        <li title="RAM">
+                                            <i class="fa fa-microchip"></i>  <field name="ram_size"></field>
+                                        </li>                                        
+                                        <li title="SSD">
+                                            <i class="fa fa-hdd-o"></i>  <field name="disk_size"></field>
+                                        </li>
+                                        <li title="Core">
+                                            <i class="fa fa-microchip"></i>  <field name="processor_core"></field>
+                                        </li>
+                                        <li  title="Address">
+                                             <i class="fa fa-sitemap"></i>  <field name="ip"></field>
+                                        </li>
+                                        <li  title="SSH Address">
+                                             <i class="fa fa-terminal"></i>  <field name="ssh_host"></field>
+                                        </li>                                        
+                                    </ul>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <!-- calendar if a date field exists -->
+        <!-- graph -->
+        <record id="view_sh_physical_server_graph" model="ir.ui.view">
+            <field name="name">sh_physical_server</field>
+            <field name="model">sh.physical_server</field>
+            <field name="arch" type="xml">
+                <graph string="Physical Server" type="bar">
+                    <!--<field name="so_server"/>-->
+                </graph>
+            </field>
+        </record>
+        <!-- action window -->
+        <record id="action_sh_physical_server" model="ir.actions.act_window">
+            <field name="name">Physical Server</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sh.physical_server</field>
+            
+            <field name="view_mode">kanban,list,form,graph</field>
+            <field name="context">{"search_default_fieldname":1}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                Click to add a new Physical Server
+                </p><p>
+                Click the Create button to add a new Physical Server
+                </p>
+            </field>
+        </record>
+        
+        <!--<menuitem id="menu_sh_physical_server" name="Physical Server" parent="sh_physical_server_sub_menu" action="action_sh_physical_server" sequence="1"/>-->
+
+    </data>
+</odoo>

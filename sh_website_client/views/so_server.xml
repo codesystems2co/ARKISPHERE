@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_so_server_tree_inherit" model="ir.ui.view">
+            <field name="name">O.System tree</field>
+            <field name="model">so.server</field>
+            <field name="inherit_id" ref="so_server.view_so_server_tree"/>
+            <field name="arch" type="xml">
+                <field name="physical_server" position="before">
+                    <field name="order_line"/>
+                    <field name="sale_order"/>
+                </field>         
+            </field>
+        </record>
+
+        <record id="view_so_server_form_inherit" model="ir.ui.view">
+            <field name="name">O.System form</field>
+            <field name="model">so.server</field>
+            <field name="inherit_id" ref="so_server.view_so_server_form"/>
+            <field name="arch" type="xml">
+                <field name="physical_server" position="before">
+                    <field name="order_line"/>
+                    <field name="sale_order"/>
+                </field>         
+            </field>
+        </record>
+
+        <record id="view_so_server_kanban_inherit" model="ir.ui.view">
+            <field name="name">O.System kanban</field>
+            <field name="model">so.server</field>
+            <field name="inherit_id" ref="so_server.view_so_server_kanban"/>
+            <field name="arch" type="xml">
+                <xpath  expr="//li[last()]" position="before">
+                    <li>
+                        <i class="fa fa-money"></i>  <field name="order_line"></field>
+                    </li>
+                </xpath>         
+            </field>
+        </record>
+        
+    </data>
+</odoo>

@@ -1,0 +1,7 @@
+<odoo>
+	<menuitem id="so_server_top_menu" name="Servers" action="sh_physical_server.action_sh_physical_server" sequence="200" web_icon="so_server,static/description/icon.png"/>		
+	<menuitem id="menu_sh_physical_server" name="Physical" sequence="1" parent="so_server_top_menu" action="sh_physical_server.action_sh_physical_server" />		
+	<menuitem id="so_server_sub_menu" name="Virtual" sequence="2" parent="so_server_top_menu" action="action_so_server"/>		
+	<menuitem id="menu_sh_cloud_provider" name="Providers" parent="so_server_top_menu" action="sh_physical_server.action_sh_cloud_provider" sequence="3"/>
+	<menuitem id="menu_res_owner" name="Owners" parent="so_server_top_menu" action="action_so_owner" sequence="3"/>
+</odoo>

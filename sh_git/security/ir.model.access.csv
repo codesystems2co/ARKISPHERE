@@ -1,0 +1,6 @@
+"id","name","model_id","group_id","perm_read","perm_write","perm_create","perm_unlink"
+"__export__.ir_model_access_208_b96a90ca","git autor","git.autor","","True","True","True","True"
+"__export__.ir_model_access_209_f28d3b91","git collaborator","git.collaborator","","True","True","True","True"
+"__export__.ir_model_access_211_cc962648","git branch","sh.git_branch","","True","True","True","True"
+"__export__.ir_model_access_212_ffd191f8","git perms","sh.git_permissions","","True","True","True","True"
+"__export__.ir_model_access_210_b5c04227","git repository","sh.git_repository","","True","True","True","True"

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="meta_portal_my_details_fields_inherit" inherit_id="portal.portal_my_details_fields">
+            <xpath expr="//label[@for='phone']" position="before">
+                <i class="fa fa-whatsapp"/>
+            </xpath>
+            <xpath expr="//label[@for='phone']" position="after">
+                <small class="help">Add country code before your number</small>
+            </xpath>
+        </template>
+    </data>
+</odoo>

@@ -1,0 +1,2 @@
+"id","name","group_id","model_id","perm_create","perm_read","perm_write","perm_unlink"
+"__export__.ir_model_access_1162_00127208","sh.backup.revision","","sh.backup.revision","True","True","True","True"

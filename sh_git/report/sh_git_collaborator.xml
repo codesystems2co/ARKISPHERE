@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- report qweb view -->
+        <report id="report_res_partner_menu" string="My addon - Collaborators"
+         model="res.partner" report_type="qweb-pdf" 
+         file="res.partner"  name="sh_git.res_partner_report" />
+
+        <!-- document template -->
+        <template id="sh_git.res_partner_report_document" >
+            <t t-call="web.external_layout">
+                <t t-set="doc" t-value="doc.with_context({'lang': lang})"/>
+                <div class="page">
+                    <h2>
+                        Collaborators: <span t-field="doc.name"/>
+                    </h2>
+                    <div class="row mt32 mb32">
+                    </div>
+                </div>
+                <div class="oe_structure"/>
+                <h2>Repository</h2>
+                <table class="table table-sm o_main_table" name="repository_table">
+                    <thead>
+                        <tr>
+                            <td> name</td>
+                            <td>Identifier</td>
+                            <td>Name</td>
+                            <td>Full name</td>
+                            <td>Collaborators</td>
+                        </tr>
+                    </thead>
+                    <tbody class="repository_tbody">
+                        <tr t-foreach="doc.repository" t-as="line">
+                            <td><span t-field="line._name" /></td>
+                            <td><span t-field="line.identifier" /></td>
+                            <td><span t-field="line.name" /></td>
+                            <td><span t-field="line.full_name" /></td>
+                            <td><span t-field="line.collaborators" /></td>
+                        </tr> <!-- foreach-->
+                    </tbody>
+                </table>
+                <div class="oe_structure"/>
+                <h2>Permission</h2>
+                <table class="table table-sm o_main_table" name="permission_table">
+                    <thead>
+                        <tr>
+                            <td> name</td>
+                            <td>Pull</td>
+                            <td>Push</td>
+                            <td>Admin</td>
+                            <td>Collaborator</td>
+                        </tr>
+                    </thead>
+                    <tbody class="permission_tbody">
+                        <tr t-foreach="doc.permission" t-as="line">
+                            <td><span t-field="line._name" /></td>
+                            <td><span t-field="line.pull" /></td>
+                            <td><span t-field="line.push" /></td>
+                            <td><span t-field="line.admin" /></td>
+                            <td><span t-field="line.collaborator" /></td>
+                        </tr> <!-- foreach-->
+                    </tbody>
+                </table>
+                <div class="oe_structure"/>
+            </t>
+        </template>
+
+        <!-- main template -->
+        <template id="sh_git.res_partner_report">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-set="lang" t-value="doc.create_uid.lang"/>
+                    <t t-call="sh_git.res_partner_report_document" />
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

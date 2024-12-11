@@ -1,0 +1,52 @@
+
+<odoo>
+	<data>
+
+		<record id="sh_git_repository_tree_so_server" model="ir.ui.view">
+            <field name="name">sh_git_repository_tree.so_server</field>
+            <field name="model">sh.git_repository</field>
+            <field name="inherit_id" ref="sh_git.view_sh_git_repository_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[last()]" position="after">
+                    <field name="so_server" />
+                </xpath>         
+            </field>
+        </record>
+
+        <record id="sh_git_repository_form_so_server" model="ir.ui.view">
+            <field name="name">sh_git_repository_form.so_server</field>
+            <field name="model">sh.git_repository</field>
+            <field name="inherit_id" ref="sh_git.view_sh_git_repository_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group/field[last()]" position="after">
+                    <field name="so_server" id="g_so_server" string="Operating System"/>
+                </xpath>         
+            </field>
+        </record>
+
+        <record id="view_sh_git_repository_search_so_server" model="ir.ui.view">
+            <field name="name">view_sh_git_repository_search.so_server</field>
+            <field name="model">sh.git_repository</field>
+            <field name="inherit_id" ref="sh_git.view_sh_git_repository_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[last()]" position="after">
+                    <field name="so_server" />
+                </xpath>         
+            </field>
+        </record>
+
+        <record id="view_sh_git_repository_kanban_so_server" model="ir.ui.view">
+            <field name="name">view_sh_git_repository_kanban.so_server</field>
+            <field name="model">sh.git_repository</field>
+            <field name="inherit_id" ref="sh_git.view_sh_git_repository_kanban"/>
+            <field name="arch" type="xml">
+                <xpath expr="//ul/li[last()]" position="after">
+                    <li>
+                        <i class="fa fa-linux"></i>  <field name="so_server"></field>
+                    </li>
+                </xpath>         
+            </field>
+        </record>
+
+	</data>
+</odoo>

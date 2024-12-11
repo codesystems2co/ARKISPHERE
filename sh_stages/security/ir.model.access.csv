@@ -1,0 +1,6 @@
+"id","name","model_id","group_id","perm_read","perm_write","perm_create","perm_unlink"
+"__export__.ir_model_access_188_63c9a0d8","Stage","sh.stage","","True","True","True","True"
+"__export__.ir_model_access_190_3ad94f90","Production stage","sh.production","","True","True","True","True"
+"__export__.ir_model_access_189_41db4862","Development stage","sh.development","","True","True","True","True"
+"__export__.ir_model_access_206_ec2792c7","git commit","sh.git_commit","","True","True","True","True"
+"__export__.ir_model_access_209_f28d3b91","git collaborator","git.collaborator","","True","True","True","True"

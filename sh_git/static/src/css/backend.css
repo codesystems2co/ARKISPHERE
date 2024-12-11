@@ -1,0 +1,9 @@
+.kanban-button
+{
+    border-radius: 10px;
+    border: 0px!important;
+}
+.kanban-button i
+{
+    font-size: 15px;
+}

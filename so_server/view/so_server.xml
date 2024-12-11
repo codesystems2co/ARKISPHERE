@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- tree view -->
+        <record id="view_so_server_tree" model="ir.ui.view">
+            <field name="name">so_server_tree</field>
+            <field name="model">so.server</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <list string="Virtual Servers">
+                    <field name="name" />
+                    <field name="brand" />
+                    <field name="ram_size_gb" />
+                    <field name="disk_size_gb" />
+                    <field name="processor_core_gb" />
+                    <field name="git_repositories"/>
+                    <field name="physical_server" />
+                    <field name="owner" />                                                            
+                </list>
+            </field>
+        </record>
+        <!-- form view -->
+        <record id="view_so_server_form" model="ir.ui.view">
+            <field name="name">so_server_form</field>
+            <field name="model">so.server</field>
+            
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <form string="Virtual Server">
+                    <header>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <!--button type="object" name="action_view_detail" class="oe_stat_button" icon="fa-pencil-square-o"-->
+                                <!--field name="detail_count" widget="statinfo" string="Detail(s)"/-->
+                                <!--field name="detail_ids" invisible="1"/-->
+                            <!--/button-->
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only" string="Virtual Server Name"/>
+                            <h1><field name="name"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="brand" />
+                                <field name="ram_size_gb" />
+                                <field name="disk_size_gb" />   
+                                <field name="processor_core_gb" />                             
+                            </group>
+                            <group>
+                                <field name="git_repositories"/>
+                                <field name="owner" widget="many2many_tags"/>
+                            </group>
+                            <group>
+                                <field name="physical_server"/>
+                            </group>
+                        </group>
+                        <notebook>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!-- search -->
+        <record id="view_so_server_search" model="ir.ui.view">
+            <field name="name">so_server</field>
+            <field name="model">so.server</field>
+            <field name="arch" type="xml">
+                <search string="Virtual Server">
+
+                    <filter string="Name" name="filter_by_name" domain="[('name','=','')]" />
+                    <filter string="Brand" name="filter_by_brand" domain="[('brand','=','')]" />
+                    <filter string="Ram size" name="filter_by_ram_size" domain="[('ram_size_gb','=','')]" />
+                    <filter string="SSD" name="filter_by_disk_size" domain="[('disk_size_gb','=','')]" />
+                    <field name="name" select="True"/>
+                    <field name="brand" select="True"/>
+                    <field name="ram_size_gb" select="True"/>
+                    <field name="disk_size_gb" select="True"/>
+                    <field name="processor_core_gb" select="True"/>
+                    <field name="owner" select="True"/>
+                    <field name="physical_server" select="True"/>
+                    <group string="Group By..">
+                    </group>
+                </search>
+            </field>
+        </record>
+        <!-- kanban , to show image, please add image_small in the model -->
+        <record id="view_so_server_kanban" model="ir.ui.view" >
+            <field name="name">so_server</field>
+            <field name="model">so.server</field>
+            <field name="arch" type="xml">
+                <kanban version="7.0">
+                    <field name="id" />
+                    <field name="name" />
+                    <field name="brand" />
+                    <field name="ram_size_gb" />
+                    <field name="disk_size_gb" />
+                    <field name="processor_core_gb"/>
+                    <field name="physical_server"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click o_kanban_record_has_image_fill">
+                                <div class="oe_kanban_details">
+                                    <h4>
+                                        <a type="open"><field name="name"/></a>
+                                    </h4>
+                                    <ul>
+                                        <li>
+                                           <field name="owner"></field>
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-linux"></i>  <field name="brand"></field>
+                                        </li>
+                                        <li>
+                                             <i class="fa fa-microchip"></i>  <field name="ram_size_gb"></field>
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-hdd-o"></i>  <field name="disk_size_gb"></field>
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-microchip"></i>  <field name="processor_core_gb"></field>
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-github"></i>  <field name="git_repositories"></field>
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-server"></i>  <field name="physical_server"></field>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <!-- calendar if a date field exists -->
+        <!-- graph -->
+        <record id="view_so_server_graph" model="ir.ui.view">
+            <field name="name">so_server</field>
+            <field name="model">so.server</field>
+            <field name="arch" type="xml">
+                <graph string="Virtual Server" type="bar">
+                </graph>
+            </field>
+        </record>
+        <!-- action window -->
+        <record id="action_so_server" model="ir.actions.act_window">
+            <field name="name">Virtual Server</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">so.server</field>
+            
+            <field name="view_mode">kanban,list,form</field>
+            <field name="context">{"search_default_fieldname":1}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                Click to add a new Virtual Server
+                </p><p>
+                Click the Create button to add a new Virtual Server
+                </p>
+            </field>
+        </record>
+
+       
+    </data>
+</odoo>

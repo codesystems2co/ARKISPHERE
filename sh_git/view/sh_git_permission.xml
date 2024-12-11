@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- tree view -->
+        <record id="view_sh_git_permissions_tree" model="ir.ui.view">
+            <field name="name">sh_git_permissions_tree</field>
+            <field name="model">sh.git_permissions</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <list string="Permission">
+                    <field name="pull" />
+                    <field name="push" />
+                    <field name="admin" />
+                </list>
+            </field>
+        </record>
+        <!-- form view -->
+        <record id="view_sh_git_permissions_form" model="ir.ui.view">
+            <field name="name">sh_git_permissions_form</field>
+            <field name="model">sh.git_permissions</field>
+            
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <form string="Permission">
+                    <header>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <!--button type="object" name="action_view_detail" class="oe_stat_button" icon="fa-pencil-square-o"-->
+                                <!--field name="detail_count" widget="statinfo" string="Detail(s)"/-->
+                                <!--field name="detail_ids" invisible="1"/-->
+                            <!--/button-->
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only" string="Permission Name"/>
+                            <h1><field name="name"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="pull" />
+                                <field name="push" />
+                                <field name="admin" />
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                        <notebook>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!-- search -->
+        <record id="view_sh_git_permissions_search" model="ir.ui.view">
+            <field name="name">sh_git_permissions</field>
+            <field name="model">sh.git_permissions</field>
+            <field name="arch" type="xml">
+                <search string="Permission">
+
+                    <filter string="Pull" name="filter_by_pull" domain="[('pull','=','')]" />
+                    <filter string="Push" name="filter_by_push" domain="[('push','=','')]" />
+                    <filter string="Admin" name="filter_by_admin" domain="[('admin','=','')]" />
+                    <field name="pull" select="True"/>
+                    <field name="push" select="True"/>
+                    <field name="admin" select="True"/>
+                    <group string="Group By..">
+                    </group>
+                </search>
+            </field>
+        </record>
+        <!-- kanban , to show image, please add image_small in the model -->
+        <record id="view_sh_git_permissions_kanban" model="ir.ui.view" >
+            <field name="name">sh_git_permissions</field>
+            <field name="model">sh.git_permissions</field>
+            <field name="arch" type="xml">
+                <kanban version="7.0">
+                    <field name="id" />
+                    <field name="pull" />
+                    <field name="push" />
+                    <field name="admin" />
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click o_kanban_record_has_image_fill">
+                                <div class="oe_kanban_details">
+                                    <h4>
+                                        <a type="open"><field name="name"/></a>
+                                    </h4>
+                                    <ul>
+                                        <li>
+                                            Admin: <field name="admin"></field>
+                                        </li>
+                                        <li>
+                                            Pull: <field name="pull"></field>
+                                        </li>
+                                        <li>
+                                            Push: <field name="push"></field>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <!-- calendar if a date field exists -->
+        <!-- graph -->
+        <record id="view_sh_git_permissions_graph" model="ir.ui.view">
+            <field name="name">sh_git_permissions</field>
+            <field name="model">sh.git_permissions</field>
+            <field name="arch" type="xml">
+                <graph string="Permission" type="bar">
+                </graph>
+            </field>
+        </record>
+        <!-- action window -->
+        <record id="action_sh_git_permissions" model="ir.actions.act_window">
+            <field name="name">Permission</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sh.git_permissions</field>
+            <field name="view_mode">kanban,list,form</field>
+            <field name="context">{"search_default_fieldname":1}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                Click to add a new Permission
+                </p><p>
+                Click the Create button to add a new Permission
+                </p>
+            </field>
+        </record>
+
+        <!--<menuitem id="menu_sh_git_permissions" name="Permission" parent="menu_sh_git_repository_item2" action="action_sh_git_permissions" sequence="4" groups="base.group_user"/>-->
+    </data>
+</odoo>

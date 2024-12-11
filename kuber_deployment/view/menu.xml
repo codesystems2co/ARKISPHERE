@@ -1,0 +1,18 @@
+<odoo>
+		<menuitem id="kuber_deployment_top_menu" name="Deployment" sequence="203" action="action_kuber_deploy" web_icon="kuber_deployment,static/description/icon.png"/>
+		<menuitem id="menu_kuber_deploy" name="Clusters" parent="kuber_deployment_top_menu" action="action_kuber_deploy" sequence="20"/>
+		<menuitem id="sh_git_top_menu_1" groups="base.group_user"  name="Github" parent="kuber_deployment_top_menu" sequence="202"/>
+		<menuitem id="menu_Autor" name="Subscriptors" parent="kuber_deployment_top_menu" action="sh_git.action_Autor" sequence="0" groups="base.group_user"/>
+		<menuitem id="menu_Autor" name="Autors" parent="sh_git_top_menu_1" action="sh_git.action_Autor" sequence="1" groups="base.group_user"/>
+		<menuitem id="menu_sh_git_repository_item1" name="Repositories" parent="sh_git_top_menu_1" action="sh_git.action_sh_git_repository" sequence="2" groups="base.group_user"/>		
+		<menuitem id="menu_sh_git_branch" name="Branches" parent="sh_git_top_menu_1" action="sh_git.action_sh_git_branch" sequence="3" groups="base.group_user"/>        
+		<menuitem id="menu_Collaborator" name="Collaborators" parent="sh_git_top_menu_1" action="sh_git.action_Collaborator" sequence="4" groups="base.group_user"/>	
+		<menuitem id="menu_kubernets_kuber_docker_image" name="Docker" parent="kuber_deployment_top_menu" action="action_kubernetskuber_docker_image" sequence="20"/>
+        <menuitem id="menu_kubernets_kuber_docker_tag" name="Tags Built" parent="menu_kubernets_kuber_docker_image" action="action_kubernetskuber_docker_image" sequence="1"/>
+		<menuitem id="menu_kuber_template" name="Templates" parent="menu_kubernets_kuber_docker_image" action="action_kuber_template" sequence="20"/>
+		<menuitem id="menu_kuber_deploy" name="Clusters" parent="kuber_deployment_top_menu" action="action_kuber_deploy" sequence="20"/>
+		<menuitem id="menu_kubernets_kuber_exposer" name="Exposer" parent="menu_kuber_deploy" action="action_kubernets_kuber_exposer" sequence="20"/>
+		<menuitem id="menu_kuber_commands" name="Commands" parent="menu_kuber_deploy" action="action_kuber_commands" sequence="20"/>
+		<menuitem id="menu_kuber_domains" name="Domains" parent="menu_kuber_deploy" action="action_kuber_domains" sequence="21"/>
+		<menuitem id="menu_kuber_domains_ssl" name="SSL" parent="menu_kuber_deploy" action="action_domains_ssl" sequence="21"/>
+</odoo>

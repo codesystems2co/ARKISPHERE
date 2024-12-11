@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>   
+
+    <template id="view_page_my_projects">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container">
+                    <!-- Page Contents -->    
+                    <h3>My Projects</h3>
+                    <div class="my-projects-page">
+                        <div class="o_form_buttons_view">
+                            <a href="#" id="sh-new-repository" class="btn btn-primary">New</a>
+                            <a href="#" id="sh-cancel-repository" class="btn btn-secondary">Cancel</a>
+                        </div>
+                        <div class="sh-form-new-repository">
+                            <form>
+
+                                <div>
+                                    <div class="form-group">
+                                        <label>Restore Project From</label>
+                                        <select id="restore_way" class="form-control">
+                                            <option value="standar">Standar</option>
+                                            <option value="odoo_sh">Odoo.sh</option>
+                                        </select>
+                                    </div>                                  
+                                </div>
+                                <div>
+                                    <div class="form-group from-scratch">
+                                        <hr></hr>
+                                        <label for="sh_repository_name">Name</label>
+                                        <input type="text" class="form-control" id="sh_repository_name"/>
+                                    </div>                                    
+
+                                    <div class="form-group from-repository">
+                                    <hr></hr>
+                                        <div class="github_repositories">
+                                            <label for="github_repositories"><i class="fa fa-github"></i> Repository</label>
+                                            <select id="github_repositories" name="github_repositories" class="form-control"/>
+                                        </div>
+                                        <div class="github_repository_branches">
+                                            <label for="github_repository_branches"><i class="fa fa-code-fork"></i> Main Branch</label>
+                                            <select id="github_repository_branches" name="github_repository_branches" class="form-control"/>
+                                        </div>
+
+                                        <div class="form-group from-repository">
+                                            <label for="database"><i class="fa fa-database"></i> Database</label>
+                                            <input id="database" name="database" type="file" class="form-control"></input>
+                                        </div>
+                                        <hr></hr>
+                                    </div>
+
+                                    <div class="form-group from-scratch">
+                                        <label for="sh_repository_visibility">Visibility</label>
+                                        <select class="form-control" id="sh_repository_visibility">
+                                            <option value="true">Private</option>
+                                            <option value="false">Public</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group ">
+                                        <label for="deployments_options">Deployment</label>
+                                        <select class="form-control" id="deployments_options">
+                                        </select>
+                                        <small class="deploy_so_server"></small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <t t-set="_so_server" t-value="request.env['so.server'].sudo().get_current_server()"></t>
+                                        <div id="sh_so_server" class=""><t t-out="_so_server"/></div>                              
+                                    </div>
+                                </div>                               
+                                
+                                <a href="#" id="sh-save-repository" class="btn btn-primary"><i class="fa fa-rocket"/> Deploy</a> 
+                                <div class="row-spinner">
+                                    <i class="fa fa-spinner"></i> Loading...
+                                    <div>
+                                        <small>Kindly, wait this page will reload shortly</small>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <t t-set="partner_repositories" t-value="request.env['sh.git_repository'].get_repositories()"/>
+                        <t t-set="index_columns" t-value="1"/>                        
+                        
+                            <t t-foreach="partner_repositories" t-as="repository">
+                                
+                                    <div class="col-sm so-server-item">                                 
+                                        <div class="card">
+                                        
+                                            <div class="card-body text-center">
+                                                <i class="fa fa-github"/>
+                                            </div>
+
+                                            <div class="card-body text-center">
+                                                <div class="so_name"><a  t-attf-href="/project/stages?project={{repository[0].id}}"><t t-out="repository[0].name"></t></a></div>
+                                                <div><i class="fa fa-linux"></i> <t t-out="repository[0].so_server.name"></t></div>
+                                                <div><a target="_blank"  t-attf-href="{{repository[0].url}}"><i class="fa fa-github"></i> Go!</a></div>
+                                            </div>    
+
+                                        </div>
+                                    </div>
+                               
+                                <t t-set="index_columns" t-value="index_columns + 1"/>  
+                            </t> 
+                    </div>                   
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <record id="page_my_projects" model="website.page">
+        <field name="name">My projects</field>
+        <field name="website_published">True</field>
+        <field name="model">sh.git_repository</field>
+        <field name="url">/my/projects</field>
+        <field name="view_id" ref="view_page_my_projects"/>
+        <!-- Provide  template id that you want to render --> 
+    </record>
+    
+</odoo>

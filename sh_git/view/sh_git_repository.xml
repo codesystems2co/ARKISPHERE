@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- tree view -->
+        <record id="view_sh_git_repository_tree" model="ir.ui.view">
+            <field name="name">sh_git_repository_tree</field>
+            <field name="model">sh.git_repository</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <list string="Repositories">
+                    <field name="identifier" />
+                    <field name="name" />
+                    <field name="full_name" />
+                    <!--<field name="so_server" />-->
+                </list>
+            </field>
+        </record>
+        <!-- form view -->
+        <record id="view_sh_git_repository_form" model="ir.ui.view">
+            <field name="name">sh_git_repository_form</field>
+            <field name="model">sh.git_repository</field>
+            
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <form string="Repository">
+                    <header>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <!--button type="object" name="action_view_detail" class="oe_stat_button" icon="fa-pencil-square-o"-->
+                                <!--field name="detail_count" widget="statinfo" string="Detail(s)"/-->
+                                <!--field name="detail_ids" invisible="1"/-->
+                            <!--/button-->
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only" string="Repository Name"/>
+                            <h1><field name="name"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="identifier" />
+                                <field name="full_name" />
+                                <field name="autor" />
+                            </group>
+                            <group>
+                                <button name="open_repository" string="" type="object" icon="fa-github"/>
+                            </group>
+                        </group>  
+                                           
+                        <notebook>
+                             <page string="Branches">
+                                <field name="branches" />
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!-- search -->
+        <record id="view_sh_git_repository_search" model="ir.ui.view">
+            <field name="name">sh_git_repository</field>
+            <field name="model">sh.git_repository</field>
+            <field name="arch" type="xml">
+                <search string="Repositories">
+                    <filter string="Identifier" name="filter_by_identifier" domain="[('identifier','=','')]" />
+                    <filter string="Name" name="filter_by_name" domain="[('name','=','')]" />
+                    <filter string="Full name" name="filter_by_full_name" domain="[('full_name','=','')]" />
+                    <field name="identifier" select="True"/>
+                    <field name="name" select="True"/>
+                    <field name="full_name" select="True"/>                    
+                    <group string="Group By..">                       
+                    </group>
+                </search>
+            </field>
+        </record>
+        <!-- kanban , to show image, please add image_small in the model -->
+        <record id="view_sh_git_repository_kanban" model="ir.ui.view" >
+            <field name="name">sh_git_repository</field>
+            <field name="model">sh.git_repository</field>
+            <field name="arch" type="xml">
+                <kanban version="7.0" string="Repositories">
+                    <field name="id" />
+                    <field name="identifier" />
+                    <field name="name" />
+                    <field name="full_name" />
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click o_kanban_record_has_image_fill">
+                                <div class="oe_kanban_details">
+                                    <h4>
+                                        <a type="open"><field name="name"/></a>
+                                    </h4>
+                                    <ul>
+                                        <li>
+                                            <field name="branches"/>
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-user"/> <field name="autor"/>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <!-- calendar if a date field exists -->
+        <!-- graph -->
+        <record id="view_sh_git_repository_graph" model="ir.ui.view">
+            <field name="name">sh_git_repository</field>
+            <field name="model">sh.git_repository</field>
+            <field name="arch" type="xml">
+                <graph string="Repository" type="bar">
+                    <field name="branches"/>
+                </graph>
+            </field>
+        </record>
+        <!-- action window -->
+        <record id="action_sh_git_repository" model="ir.actions.act_window">
+            <field name="name">Repositories</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sh.git_repository</field>
+            <field name="view_mode">kanban,list,form,graph</field>
+            <field name="context">{"search_default_fieldname":1}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                Click to add a new Repository
+                </p><p>
+                Click the Create button to add a new Repository
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

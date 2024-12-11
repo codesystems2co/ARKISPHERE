@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="address_b2b" inherit_id="website_sale.address">
+            <xpath expr="//form[@class='checkout_autoformat']/div/div[4]/label" position="before">
+                <i class="fa fa-whatsapp"/>
+            </xpath>
+             <xpath expr="//form[@class='checkout_autoformat']/div/div[4]/label" position="after">
+                <small class="help">Add country code before your number</small>
+            </xpath>
+        </template>
+    </data>
+</odoo>

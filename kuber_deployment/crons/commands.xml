@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data noupdate="0">
+        <record id="exec_branch_commands" model="ir.cron">
+            <field name="name">SH Deploy Kuber Commands</field>
+            <field name="interval_number">5</field>
+            <field name="interval_type">minutes</field>
+            <field name="user_id" ref="base.user_root" />
+            <field name="state">code</field>
+            <field name="model_id" ref="model_kuber_commands" />
+            <field name="code">model.exec_commands()</field>
+            <field name="active" eval="True" />
+        </record>
+    </data>
+</odoo>

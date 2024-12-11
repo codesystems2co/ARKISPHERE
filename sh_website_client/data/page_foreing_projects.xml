@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>   
+
+    <template id="view_page_foreing_projects" name="Foreing Projects">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container">
+                    <t t-set="partner_foreing_repositories" t-value="request.env['sh.git_repository'].get_foreing_repositories()"/>
+                    <div class="row foreing-projects" i-if="partner_foreing_repositories and len(partner_foreing_repositories)>0">
+                        <h3>Foreing Projects</h3>
+                        <div class="foreing-projects-list">
+                            
+                            <t t-set="index_columns" t-value="1"/>                        
+                            
+                                <t t-foreach="partner_foreing_repositories" t-as="repository">
+                                    
+                                    <div class="col-sm so-server-item">                                 
+                                        <div class="card">
+                                        
+                                            <div class="card-body text-center">
+                                                <i class="fa fa-github"/>
+                                            </div>
+
+                                            <div class="card-body text-center">
+                                                <div class="so_name"><a  t-attf-href="/project/stages?project={{repository[0].id}}"><t t-out="repository[0].name"></t></a></div>
+                                                <div><i class="fa fa-linux"></i> <t t-out="repository[0].so_server.name"></t></div>
+                                                <div><a target="_blank"  t-attf-href="{{repository[0].url}}"><i class="fa fa-github"></i> Go!</a></div>
+                                            </div>    
+
+                                        </div>
+                                    </div>
+                            
+                                <t t-set="index_columns" t-value="index_columns + 1"/>  
+                            </t> 
+                            <t t-if="index_columns == 1">
+                                <div class="row-spinner">                                    
+                                    <div>
+                                        <i class="fa fa-spinner"></i> Not projects assigned to your account
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <record id="page_foreing_projects" model="website.page">
+        <field name="name">Foreing projects</field>
+        <field name="website_published">True</field>
+        <field name="model">sh.git_repository</field>
+        <field name="url">/foreing/projects</field>
+        <field name="view_id" ref="view_page_foreing_projects"/>
+        <!-- Provide  template id that you want to render --> 
+    </record>
+    
+</odoo>

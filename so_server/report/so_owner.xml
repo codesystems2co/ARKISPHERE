@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- report qweb view -->
+        <report id="report_res_partner_menu" string="My addon - So owner"
+         model="res.partner" report_type="qweb-pdf" 
+         file="res.partner"  name="so_server.res_partner_report" />
+
+        <!-- document template -->
+        <template id="so_server.res_partner_report_document" >
+            <t t-call="web.external_layout">
+                <t t-set="doc" t-value="doc.with_context({'lang': lang})"/>
+                <div class="page">
+                    <h2>
+                        Owner: <span t-field="doc.name"/>
+                    </h2>
+                    <div class="row mt32 mb32">
+                        <div class="col-auto mw-100 mb-2">
+                            <strong> table</strong>
+                            <p class="m-0" t-field="doc._table" />
+                        </div>
+                    </div>
+                </div>
+                <div class="oe_structure"/>
+                <h2>Servers</h2>
+                <table class="table table-sm o_main_table" name="so_servers_table">
+                    <thead>
+                        <tr>
+                            <td>Name</td>
+                            <td>Brand</td>
+                            <td>Ram size</td>
+                            <td>Disk size</td>
+                            <td>Owner</td>
+                        </tr>
+                    </thead>
+                    <tbody class="so_servers_tbody">
+                        <tr t-foreach="doc.so_servers" t-as="line">
+                            <td><span t-field="line.name" /></td>
+                            <td><span t-field="line.brand" /></td>
+                            <td><span t-field="line.ram_size" /></td>
+                            <td><span t-field="line.disk_size" /></td>
+                            <td><span t-field="line.owner" /></td>
+                        </tr> <!-- foreach-->
+                    </tbody>
+                </table>
+                <div class="oe_structure"/>
+            </t>
+        </template>
+
+        <!-- main template -->
+        <template id="so_server.res_partner_report">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-set="lang" t-value="doc.create_uid.lang"/>
+                    <t t-call="so_server.res_partner_report_document" />
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

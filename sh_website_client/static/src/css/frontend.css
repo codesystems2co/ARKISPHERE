@@ -1,0 +1,614 @@
+button#signup-git
+{
+    background-color: black!important;
+    color: white;
+}
+
+button#signup-git i
+{
+    font-size: 15px;
+}
+
+.field-login, .field-name, .field-confirm_password, .oe_login_buttons button
+{
+    display: none;
+}
+
+div.field-platform div.btn i
+{
+    font-size: 50px!important;
+}
+div.field-platform div.btn
+{
+    border: 0px solid;
+}
+div.field-platform div.btn:eq(1)
+{
+    margin-left: 15px;
+}
+div.field-platform div.btn-selected
+{
+    background-color: #ddd;
+    border-radius: 20px;    
+    border: 0px solid #555;
+}
+.so-server-item
+{
+    max-width: 260px;
+    min-width: 260px;
+    display: inline-grid;
+    margin-bottom: 10px;
+}
+.so-server-item .card-body:first-child i
+{
+    font-size: 115px;
+}
+.so-server-item .so_name
+{
+    font-size: 23px;
+}
+.widget-sh-title
+{
+    padding-left: 10px;
+    width: auto;
+}
+.my-stages-page i.fa
+{
+    width: auto;
+}
+.widget-sh-branch
+{
+    padding-right: 7px;
+    padding-left: 15px;
+}
+.sh-column-widgets
+{
+    padding-left: 30px;
+}
+.sh-widget 
+{
+    margin-bottom: 15px;
+    min-width: 240px;
+}
+.widget-sh-row
+{
+    background: #ddd;
+    padding: 4px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+.branches-columned input
+{
+    width: auto;
+}
+.branches-columned .row
+{
+    background: #E8E8E8;
+    border-bottom: 1px solid #F5F5F5;
+    cursor: pointer;
+}
+.branches-columned .row:hover
+{
+    background: #BEBEBE;
+}
+.sh-widget-new-branch
+{
+    padding-top: 10px;
+    background: white;
+    padding-bottom: 10px;
+}
+#from-branches
+{
+    margin-left: 16px;
+    width: 87%;
+}
+.sh-middle-row .nav-link
+{
+    background: #BEBEBE;
+    color:black;
+    margin-right: 3px;
+}
+.sh-middle-row li.active
+{
+    background: #ddd;
+}
+.sh-middle-row .tab-pane
+{
+    padding: 5px;
+}
+.sh-branch-commit
+{
+    display: block;
+    width: 90%;
+    padding-bottom: 10px;
+}
+.sh-branch-commit .row
+{
+    padding-left: 38px;
+    font-size: 12px;    
+}
+.sh-branch-commit .sh-c-name
+{
+    font-weight: bold;
+}
+.sh-branch-commit .sh-c-message
+{
+    font-weight: normal;
+    color: #555;
+}
+.sh-branch-commit .sh-c-autho
+{
+    color: #888; 
+}
+.sh-branch-commit .sh-c-link
+{
+    font-weight: normal;
+    float: right;
+    font-style: italic;
+}
+.sh-branch-commit .row a
+{
+    padding-left: 5px;
+}
+.sh-branch-commit .row a.btn
+{
+    margin-left: 4px;
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+.sh-form-new-repository
+{
+    padding: 15px;
+    background: aliceblue;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    display: none;
+}
+.my-projects-page .o_form_buttons_view
+{
+    margin-bottom: 10px;
+}
+.my-projects-page
+{
+    margin-bottom: 25px;
+}
+#sh-cancel-repository
+{
+    display: none;
+}
+#sh_so_server
+{
+    display: none;
+}
+.row-btn
+{
+    display: block;
+    width: 100%;
+    height: auto;
+}
+#create_branch_from
+{
+    margin-left: 15px;
+    text-decoration: revert;
+}
+#new-referenced-branch
+{
+    height: 20px;
+    width: 87%;
+    margin-left: 6%;
+    margin-right: 5%;
+    margin-top: 6%
+}
+.row-active
+{
+    background: #444;
+}
+.row-active:hover
+{
+    color: white;
+}
+
+@-webkit-keyframes rotate {
+    100% { -webkit-transform:rotate(360deg); }
+}
+@-moz-keyframes rotate {
+    100% { -moz-transform:rotate(360deg); }
+}
+@-o-keyframes rotate {
+    100% { -o-transform:rotate(360deg); }
+}
+@-ms-keyframes rotate {
+    100% { -ms-transform:rotate(360deg); }
+}
+@keyframes rotate {
+    100% { transform:rotate(360deg); }
+}
+
+.row-spinner i 
+{        
+    -webkit-animation-name: rotate;
+    -moz-animation-name: rotate;
+    -ms-animation-name: rotate;
+    -o-animation-name: rotate;    
+    animation-name: rotate;
+
+    -webkit-animation-duration: 5s;
+    -moz-animation-duration: 5s;
+    -ms-animation-duration: 5s;
+    -o-animation-duration: 5s;
+    animation-duration: 5s;
+        
+    -webkit-animation-iteration-count: infinite;
+    -moz-animation-iteration-count: infinite;
+    -ms-animation-iteration-count: infinite;
+    -o-animation-iteration-count: infinite;    
+    animation-iteration-count: infinite;
+
+    -webkit-animation-timing-function: linear;
+    -moz-animation-timing-function: linear;
+    -ms-animation-timing-function: linear;
+    -o-animation-timing-function: linear;    
+    animation-timing-function: linear;     
+}
+
+.row-spinner
+{
+}
+
+#sh-shell-tab iframe
+{
+    width: 100%;
+    min-height: 500px;
+    height: 100%;
+    border: none;
+    border-radius: 7px;
+}
+
+.btn-connect
+{
+    text-align: right;
+    display: inherit;
+}
+
+.btn-connect a
+{
+    font-size: 12px;
+}
+
+#sh-shell-tab
+{
+    font-size: 13px;
+    text-align: center;
+}
+
+#assign_collaborator, #save_command, #assign_domain,#ssl_create_self_signed, #ssl_create
+{
+    font-size: 12px;
+    margin-top: 3px;
+}
+
+i.delete_command, i.unssign_collaborator
+{
+    padding-bottom: 1px;
+    padding-top: 1px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+.field-username-collaborator, .field-command, .field-domain-name, .field-domain-ssl
+{
+    display: grid;
+    margin-left: 17px;
+}
+
+.field-command, .field-domain-name, .field-domain-ssl
+{
+    min-width: 210px;
+    max-width: 353px;
+}
+.ssl_security
+{
+    margin-top: 4px;
+    margin-bottom: 23px;
+}
+
+.collaborators_list, .commands_list, .domains_list, .ssl_domains_list
+{
+    margin-left: 17px;
+    margin-top: 10px;
+}
+
+.collaborator-delete
+{
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.collaborator-item, .command-item
+{
+    margin-top: 3px;
+    border-bottom: 1px solid #eee;
+    padding: 7px;
+}
+
+.collaborator-item span:eq(), .command-item span:eq(1)
+{
+    line-height: 35px;
+}
+
+.foreing-projects
+{
+    display: block;
+    margin-left: -1px;
+}
+
+.access-right
+{
+    display: none;
+}
+
+.container
+{
+    padding-top: 15px;
+}
+
+.new-branch-spinner
+{
+    display: none;
+}
+
+#sh-settings-tab h4
+{
+    margin-top:30px;
+}
+
+#sh-settings-tab h4:eq(1)
+{
+    margin-top:0px!important;
+}
+
+#ssl_create, #ssl_create_self_signed
+{
+    max-width: 202px;
+}
+
+#ssl_create_self_signed
+{
+    margin-top: 5px;
+}
+
+.container-tab
+{
+    display: inline-grid;
+    width: 46%;
+}
+
+#_service, #_database
+{
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+i.fa-opera
+{
+    color: #5f5e97;
+}
+div.field-platform
+{
+    text-align: center;
+}
+#app-dashboard
+{
+    margin-left: 30px;
+}
+.col-lg-4 address span
+{
+    color: black!important;
+}
+#app-gateway
+{
+    display: none;
+}
+div.app-logs-container
+{
+    max-height: 300px;
+    overflow-y: scroll;
+    font-size: 12px!important;
+}
+.command-item .cmd
+{
+    width: 90%;
+    padding: 0px;
+    float: left;
+}
+.commited-by
+{
+    padding-left: 5px !important;
+}
+footer#bottom
+{
+    background-color: black !important;
+    margin-top: -18px;
+}
+footer#bottom span
+{
+    color: white!important;
+}
+.btn-connect .btn, .btn-connect input
+{
+    width: auto;
+}
+.sh-c-author span
+{
+    width: auto;
+    padding: 0px;
+}
+.sh-c-author
+{
+    padding-left: 52px!important;
+}
+.command-item .float-left
+{
+    float: left;
+    width: auto;
+    margin: 0px;
+
+}
+div.cmd
+{
+    width: 80%;
+    font-size: 12px;
+}
+.tab-pane .btn, .tab-pane input, .tab-pane select
+{
+    width: fit-content!important;
+}
+#commands
+{
+    width: 100%!important;
+}
+.widget-panel
+{
+    margin: 5px;
+    background: #eee;
+    padding: 8px;
+}
+select#collaborators_list
+{
+}
+i.unssign_collaborator
+{
+    line-height: inherit;
+    height: 31px;
+    margin-top: 4px;
+    margin-right: 4px;
+}
+i.delete_domain
+{
+    padding: 6px;
+    height: 31px;
+    margin-top: 4px;
+    margin-right: 4px;
+}
+.ssl-domain-to-sign
+{
+    display: ruby;
+}
+input#ssl_cert_key, input#ssl_cert
+{
+    width: 267px !important;
+}
+select#_ssl_type
+{
+    margin-left: 19px;
+    min-width: 175px;
+}
+
+select#_domain
+{
+    min-width: 175px;
+}
+.ssl-domain-to-sign-type
+{
+    margin-top: 5px;
+    display: ruby;
+}
+div.ssl-file
+{
+    display: none;
+}
+p.text-prewrap
+{
+    white-space: normal!important;
+}
+.my-stages-page
+{
+    margin-bottom: 20px;
+}
+.field-stages-branches
+{
+   display: ruby; 
+}
+.field-stages-branches select
+{
+    min-width: 175px;
+}
+i.delete_branch
+{
+    padding-left: 7px;
+    padding-right: 7px;
+    
+}
+ #restart-branch i.rotate
+{        
+    -webkit-animation-name: rotate;
+    -moz-animation-name: rotate;
+    -ms-animation-name: rotate;
+    -o-animation-name: rotate;    
+    animation-name: rotate;
+
+    -webkit-animation-duration: 5s;
+    -moz-animation-duration: 5s;
+    -ms-animation-duration: 5s;
+    -o-animation-duration: 5s;
+    animation-duration: 5s;
+        
+    -webkit-animation-iteration-count: infinite;
+    -moz-animation-iteration-count: infinite;
+    -ms-animation-iteration-count: infinite;
+    -o-animation-iteration-count: infinite;    
+    animation-iteration-count: infinite;
+
+    -webkit-animation-timing-function: linear;
+    -moz-animation-timing-function: linear;
+    -ms-animation-timing-function: linear;
+    -o-animation-timing-function: linear;    
+    animation-timing-function: linear;     
+}
+.project-for
+{
+    color: #888;
+}
+.project-name
+{
+    color: #555;
+}
+.from-repository
+{
+    display: none;
+}
+.tbody-revisions
+{
+    font-size: 12px;
+}
+.restore-row-button
+{
+    margin-left: 5px;
+}
+#sh-backups-tab .row-spinner
+{
+    display: none;
+}
+select#github_repository_branches option
+{
+    display: none;
+}
+a#pgadmin
+{
+    display: none;
+}
+div.powered-by img
+{
+    width: 108px;
+}
+select.o_wsale_product_attribute
+{
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

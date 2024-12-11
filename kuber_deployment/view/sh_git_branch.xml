@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- form view -->
+        <record id="view_sh_git_branch_form_inherit" model="ir.ui.view">
+            <field name="name">sh_git_branch_form_inherit</field>
+            <field name="model">sh.git_branch</field>
+            <field name="inherit_id" ref="sh_git.view_sh_git_branch_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group/field[last()]" position="after">
+                    <field name="kuber_identifier_name" id="kuber_identifier_name" string="Kuber Identifier" readonly="1"/>
+                    <field name="kuber_exposers" id="kuber_exposers" string="Hostname Publisher" readonly="1"/>
+                </xpath>
+                <xpath expr="//page[last()]" position="after">
+                    <page string="Commands">
+                        <field name="kuber_commands" id="kuber_commands" string=""/>
+                    </page>
+                </xpath>
+                <xpath expr="//page[last()]" position="after">
+                    <page string="Domains">
+                        <field name="kuber_domains" id="kuber_domains" string=""/>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

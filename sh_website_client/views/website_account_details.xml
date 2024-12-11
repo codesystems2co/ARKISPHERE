@@ -1,0 +1,16 @@
+<odoo>
+    <data>
+
+        <template id="portal_my_details_inherit" inherit_id="portal.portal_my_details_fields" name="SH Website Client">
+            
+            <xpath expr="//div/div" position="after">
+                <div class="form-group  col-xl-6">
+                    <label class="col-form-label label-optional" for="access_token"><i class="fa fa-github"></i><span> Git Access Token</span></label>
+                    <input type="password" name="access_token" class="form-control " t-attf-class="form-control #{error.get('access_token') and 'is-invalid' or ''}" t-att-value="access_token or partner.access_token"/>
+                </div>
+            </xpath>
+
+        </template>
+
+    </data>
+</odoo>

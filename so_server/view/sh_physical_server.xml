@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- tree view -->
+        <record id="view_sh_physical_server_tree_inherith" model="ir.ui.view">
+            <field name="name">sh_physical_server_tree_inherith</field>
+            <field name="model">sh.physical_server</field>
+            <field name="inherit_id" ref="sh_physical_server.view_sh_physical_server_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='owner']" position="before">
+                    <field name="so_server" />
+                </xpath> 
+            </field>
+        </record>
+
+        <record id="view_sh_physical_server_form_inherith" model="ir.ui.view">
+            <field name="name">sh_physical_server_form_inherith</field>
+            <field name="model">sh.physical_server</field>
+            <field name="inherit_id" ref="sh_physical_server.view_sh_physical_server_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group/field[@name='owner']" position="after">
+                    <field name="so_server" />
+                    <!--
+                    <group>
+                         <field name="ram_size_used"/>
+                        <field name="disk_size_used"/>
+                    </group>
+                    <group>
+                         <field name="ram_size_available"/>
+                        <field name="disk_size_available"/>
+                    </group>
+                   -->
+                </xpath> 
+            </field>
+        </record>
+
+        <record id="view_sh_physical_server_search_inherith" model="ir.ui.view">
+            <field name="name">view_sh_physical_server_search</field>
+            <field name="model">sh.physical_server</field>
+            <field name="inherit_id" ref="sh_physical_server.view_sh_physical_server_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='password']" position="after">
+                    <field name="so_server" />
+                </xpath> 
+            </field>
+        </record>
+
+        <record id="view_sh_physical_server_kanban_inherith" model="ir.ui.view">
+            <field name="name">view_sh_physical_server_kanban_inherith</field>
+            <field name="model">sh.physical_server</field>
+            <field name="inherit_id" ref="sh_physical_server.view_sh_physical_server_kanban"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='password']" position="after">
+                    <field name="so_server" />
+                </xpath> 
+                <xpath expr="//ul/li[last()]" position="after">
+                    <li title="Operating System" invisible="not so_server">
+                        <i class="fa fa-linux"></i>  <field name="so_server"></field>
+                    </li>
+                    <li title="Owner">
+                         <field name="owner"></field>
+                    </li>
+                </xpath>
+            </field>
+        </record>
+        
+    </data>
+</odoo>

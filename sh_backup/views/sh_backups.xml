@@ -1,0 +1,73 @@
+<odoo>
+    <data>
+        <record id="view_backup_revisions_config_form" model="ir.ui.view">
+            <field name="name">sh.backup.revision.form</field>
+            <field name="model">sh.backup.revision</field>
+            <field name="arch" type="xml">
+                <form string="Revisions">
+                    <header>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <!--button type="object" name="action_view_detail" class="oe_stat_button" icon="fa-pencil-square-o"-->
+                                <!--field name="detail_count" widget="statinfo" string="Detail(s)"/-->
+                                <!--field name="detail_ids" invisible="1"/-->
+                            <!--/button-->
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only" string="Datetime"/>
+                            <h1><field name="name"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="version" />
+                                <field name="revision" />
+                                <field name="type" />
+                                <field name="branch" />  
+                                <field name='repository'/>                        
+                                <field name='autor'/>
+                                <field name='username'/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Google Drive">
+                                <group>
+                                    <field name="google_drive_share_file_link" widget="url" readonly="1"/>
+                                    <field name="google_drive_folder_id" readonly="1"/>
+                                    <field name="google_drive_file_id" readonly="1"/>                                
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_backup_revisions_config_tree" model="ir.ui.view">
+            <field name="name">sh.backup.revision.tree</field>
+            <field name="model">sh.backup.revision</field>
+            <field name="arch" type="xml">
+                <list string="Revisions">
+                    <field name='name'/>                    
+                    <field name='version'/>
+                    <field name="type" />
+                    <field name='revision'/>
+                    <field name='branch'/>
+                    <field name='repository'/>
+                    <field name='autor'/>
+                    <field name='username'/>
+                </list>
+            </field>
+        </record>
+
+        <record id="action_backup_revisions" model="ir.actions.act_window">
+            <field name="name">Revisions</field>
+            <field name="res_model">sh.backup.revision</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_id" ref="view_backup_revisions_config_tree"/>
+        </record>
+
+        <menuitem id="sh_backup"  name="Backups" parent="kuber_deployment.kuber_deployment_top_menu" action="action_backup_revisions" sequence="203"/>
+        
+    </data>
+</odoo>

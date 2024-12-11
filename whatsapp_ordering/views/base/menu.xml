@@ -1,0 +1,7 @@
+<odoo>
+  <data>
+
+    <menuitem id="meta_menu_whatsapp_templates" name="Whatsapp Templates" parent="mail.mail_menu_technical" action="action_meta_whatsapp_templates" sequence="1"/>
+
+  </data>
+</odoo>

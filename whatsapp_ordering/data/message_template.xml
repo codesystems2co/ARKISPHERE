@@ -1,0 +1,119 @@
+<odoo>
+      <data>
+
+            <record id="meta_new_contact" model="mail.template">
+                  <field name="name">whatsapp_new_contact</field>
+                  <field name="meta_is_whatsapp">True</field>
+                  <field name="meta_type">text</field>
+                  <field name="meta_preview_url">True</field>
+                  <field name="model_id" ref="base.model_res_partner"/>
+                  <field name="body_html"><![CDATA[   
+                                                      Dear <t t-out="object.name or ''"></t>, your account has been successfully created! 
+                                                      Your login is <t t-out="object.email or ''"></t>
+                                                      To gain access to your account, you can use the following link:
+                                          ]]></field>                
+                  <field name="description">Welcome new customers</field>
+                  <field name="lang">{{ object.lang }}</field>
+            </record>
+            
+            <record id="meta_mail_template_sale_confirmation" model="mail.template">
+                  <field name="name">whatsapps_sales_order_confirmation</field>
+                  <field name="meta_is_whatsapp">True</field>
+                  <field name="meta_type">text</field>
+                  <field name="meta_preview_url">True</field>
+                  <field name="model_id" ref="sale.model_sale_order"/>
+                  <field name="body_html"><![CDATA[Hello, your order (Ref <span style="font-weight:bold;" t-out="object.name or ''">S00049</span>) amounting in  <span style="font-weight:bold;" t-out="format_amount(object.amount_total, object.currency_id) or ''">$ 10.00</span>  <t t-if="object.state == 'sale' "> has been confirmed. Thank you for your trust!</t>]]></field>
+                  <field name="email_from">{{ (object.user_id.email_formatted or object.company_id.email_formatted or user.email_formatted) }}</field>
+                  <field name="partner_to">{{ object.partner_id.id }}</field>
+                  <field name="description">Sent to customers on order confirmation</field>
+                  <field name="lang">{{ object.partner_id.lang }}</field>
+            </record>
+
+            <record id="meta_mail_template_stock_confirmation" model="mail.template">
+                  <field name="name">whatsapp_shipping</field>
+                  <field name="meta_is_whatsapp">True</field>
+                  <field name="meta_type">text</field>
+                  <field name="meta_preview_url">False</field>
+                  <field name="model_id" ref="stock.model_stock_picking"/>
+                  <field name="body_html"><![CDATA[Hello <t t-out="object.partner_id.name or ''"></t>, We are glad to inform you that your order <t t-if="object.origin">ref (<t t-out="object.origin"></t>) </t>has been shipped. Thank you!]]></field>
+                  <field name="email_from">{{ object.partner_id.email and object.partner_id.id or object.partner_id.parent_id.id }}</field>
+                  <field name="partner_to">{{ object.partner_id.id }}</field>
+                  <field name="description">Sent to the customers when orders are delivered, if the setting is enabled</field>
+                  <field name="lang">{{ object.partner_id.lang }}</field>
+            </record>
+
+            <record id="meta_mail_template_account_confirmation" model="mail.template">
+                  <field name="name">whatsapp_invoice_sending</field>
+                  <field name="meta_is_whatsapp">True</field>
+                  <field name="meta_type">text</field>
+                  <field name="meta_preview_url">False</field>
+                  <field name="model_id" ref="account.model_account_move"/>
+                  <field name="body_html"><![CDATA[Hello <t t-out="object.partner_id.name or ''"></t>, Here is your invoice <t t-out="object.name or ''">INV/2021/05/0005</t> amounting in <t t-out="format_amount(object.amount_total, object.currency_id) or ''">$ 143,750.00</t> from <t t-out="object.company_id.name or ''">YourCompany</t>. Do not hesitate to contact us if you have any questions.]]></field>
+                  <field name="email_from">{{ (object.invoice_user_id.email_formatted or object.company_id.email_formatted or user.email_formatted) }}</field>
+                  <field name="partner_to">{{ object.partner_id.id }}</field>
+                  <field name="description">Sent to customers with their invoices</field>
+                  <field name="lang">{{ object.partner_id.lang }}</field>
+            </record>
+
+            <record id="meta_mail_template_loyalty_coupon_code" model="mail.template">
+                  <field name="name">whatsapp_coupon_information</field>
+                  <field name="meta_is_whatsapp">True</field>
+                  <field name="meta_type">text</field>
+                  <field name="meta_preview_url">False</field>
+                  <field name="model_id" ref="loyalty.model_loyalty_card"/>
+                  <field name="body_html"><![CDATA[
+                                                      Congratulations <t t-out="object.partner_id.name or ''"></t>, Here is your reward from <t t-out="object.company_id.name or ''">YourCompany</t>.
+                                                      <br />
+                                                      <t t-foreach="object.program_id.reward_ids" t-as="reward">
+                                                            <t t-if="reward.required_points &lt;= object.points">
+                                                                  <t t-out="reward.description">Reward Description</t>
+                                                            <br/>
+                                                            </t>
+                                                      </t>
+                                                      Use this code <t t-out="object.code"></t> <t t-if="object.expiration_date"> before <t t-out="object.expiration_date or ''"></t> </t> <br />
+
+                                                      Thank you.
+                                                      <t t-if="object._get_signature()">
+                                                            <br />
+                                                            <t t-out="object._get_signature() or ''">--<br/>Mitchell Admin</t>
+                                                      </t>
+                                                  ]]>
+                  </field>
+                  <field name="email_from">{{ object.program_id.company_id.email }}</field>
+                  <field name="partner_to">{{ object._get_mail_partner().id }}</field>
+                  <field name="description">Sent to customer with coupon information</field>
+                  <field name="lang">{{ object.partner_id.lang }}</field>
+            </record>           
+
+            <record id="meta_sales_payment_confirmation" model="mail.template">
+                  <field name="name">whatsapps_sales_payment_confirmation</field>
+                  <field name="meta_is_whatsapp">True</field>
+                  <field name="meta_type">text</field>
+                  <field name="meta_preview_url">True</field>
+                  <field name="model_id" ref="payment.model_payment_transaction"/>
+                  <field name="body_html"><![CDATA[   
+                                                      Dear <t t-out="object.partner_id.name or ''"></t>,</br>
+                                                      Thank you for your payment. Here is your payment receipt object.reference  amounting to <t t-out="format_amount(object.amount, object.currency_id) or ''">$ 143,750.00</t> from <t t-out="object.company_id.name or ''"></t></br>
+                                                      Do not hesitate to contact us if you have any questions.
+                                          ]]></field>                
+                  <field name="description">Sent manually to customer when clicking on 'Send receipt by whatsapp' in payment action</field>
+                  <field name="lang">{{ object.partner_id.lang }}</field>
+            </record>
+
+            <record id="meta_product_creation" model="mail.template">
+                  <field name="name">whatsapps_product_creation</field>
+                  <field name="meta_is_whatsapp">True</field>
+                  <field name="meta_type">text</field>
+                  <field name="meta_preview_url">True</field>
+                  <field name="model_id" ref="product.model_product_template"/>
+                  <field name="body_html"><![CDATA[
+
+                                          Maybe you like this new product published recently.
+                                          
+                                          ]]></field>                
+                  <field name="description">Sent to customer when product was published wich includes in some previous sale order</field>
+                  <field name="lang"></field>
+            </record>            
+
+      </data>
+</odoo>

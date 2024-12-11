@@ -1,0 +1,6 @@
+<odoo>
+	<data>
+		<!--<menuitem id="sh_physical_server_top_menu" name="Physical Servers" sequence="198" web_icon="sh_physical_server,static/description/icon.png" />
+		<menuitem id="sh_physical_server_sub_menu" name="Physical Server" sequence="40" parent="sh_physical_server_top_menu" web_icon="sh_physical_server,static/description/icon.png" />-->
+	</data>
+</odoo>

@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- tree view -->
+        <record id="view_kubernetskuber_exposer_tree" model="ir.ui.view">
+            <field name="name">kubernetskuber_exposer_tree</field>
+            <field name="model">kuber.exposer</field>
+            
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <list string="Tags Built">
+                    <field name="name" />
+                    <field name="ip" />
+                    <field name="domain" />
+                    <field name="port" />
+                    <field name="git_branch" />
+                    <field name="git_repository_name" />
+                    <field name="cluster_selector" />
+                    <field name="cluster_selector_type" />
+                    <field name="selector_label" />
+                    <field name="physical_server"/>
+                </list>
+            </field>
+        </record>
+        <!-- form view -->
+        <record id="view_kubernetskuber_exposer_form" model="ir.ui.view">
+            <field name="name">kubernetskuber_exposer_form</field>
+            <field name="model">kuber.exposer</field>
+            <field name="type">form</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <form string="Tags Built">
+                    <header>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <!--button type="object" name="action_view_detail" class="oe_stat_button" icon="fa-pencil-square-o"-->
+                                <!--field name="detail_count" widget="statinfo" string="Detail(s)"/-->
+                                <!--field name="detail_ids" invisible="1"/-->
+                            <!--/button-->
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only" string="Hostname Publisher Name"/>
+                            <h1><field name="name"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="ip"  readonly="1"/>
+                                <field name="domain" />
+                                <field name="port" />
+                                <field name="physical_server"/>
+                            </group>
+                            <group>
+                                <field name="git_branch" />
+                                <field name="git_repository_name" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="cluster_selector_type"  readonly="1"/>
+                                <field name="cluster_selector" readonly="1"/>
+                                <field name="selector_label" />
+                            </group>
+                        </group>
+                        <notebook>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!-- search -->
+        <record id="view_kubernetskuber_exposer_search" model="ir.ui.view">
+            <field name="name">kubernetskuber_exposer</field>
+            <field name="model">kuber.exposer</field>
+            <field name="arch" type="xml">
+                <search string="Tags Built">                    
+                    <field name="name" select="True"/>
+                    <field name="ip" select="True"/>
+                    <field name="domain" />
+                    <field name="port" />
+                    <field name="git_branch" select="True"/>
+                    <field name="git_repository_name"  readonly="1"/>
+                    <field name="cluster_selector" />
+                    <field name="cluster_selector_type" />
+                    <field name="selector_label" />
+                    <field name="physical_server"/>
+                    <group string="Group By..">
+                        <filter string="Kuber Cluster Branch" domain="[]" name="group_by_git_branch" context="{'group_by':'git_branch'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <!-- kanban , to show image, please add image_small in the model -->
+        <record id="view_kubernetskuber_exposer_kanban" model="ir.ui.view" >
+            <field name="name">kubernets_kuber_exposer</field>
+            <field name="model">kuber.exposer</field>
+            <field name="arch" type="xml">
+                <kanban version="7.0">
+                    <field name="id" />
+                    <field name="ip" />
+                    <field name="domain" />
+                    <field name="port" />
+                    <field name="git_branch" />
+                    <field name="git_repository_name"  readonly="1"/>
+                    <field name="cluster_selector"  readonly="1"/>
+                    <field name="cluster_selector_type" readonly="1" />
+                    <field name="selector_label" />
+                    <field name="physical_server"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click o_kanban_record_has_image_fill">
+                                <div class="oe_kanban_details">
+                                    <h4>
+                                        <a type="open"><field name="name"/></a>
+                                    </h4>
+                                    <ul>
+                                        <li>
+                                            IP: <field name="ip"></field>
+                                        </li>
+                                        <li>
+                                            IP: <field name="domain"></field>
+                                        </li>
+                                        
+                                        <li>
+                                            Port: <field name="port"></field>
+                                        </li>                                        
+                                        <li>
+                                            Branch: <field name="git_branch"></field>
+                                        </li>
+                                        <li >
+                                            Cluster Type: <span  invisible="git_branch != False">Not assigned</span><field name="cluster_selector_type" invisible="git_branch == False"></field>
+                                        </li> 
+                                        <li >
+                                            Cluster: <span  invisible="git_branch != False">Not assigned</span><field name="cluster_selector" invisible="git_branch == False"></field>
+                                        </li>       
+                                        <li >
+                                            Tier: <field name="selector_label" /> 
+                                        </li>                              
+                                        <li>
+                                            Repository: <field name="git_repository_name"></field>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <!-- calendar if a date field exists -->
+        <!-- graph -->
+        <record id="view_kubernetskuber_exposer_graph" model="ir.ui.view">
+            <field name="name">kubernetskuber_exposer</field>
+            <field name="model">kuber.exposer</field>
+            <field name="arch" type="xml">
+                <graph string="Tags Built" type="bar">
+                    <field name="ip"/>
+                    <field name="domain" />
+                    <field name="port" />
+                    <field name="git_branch"/>
+                    <field name="git_repository_name" readonly="1"/>
+                    <field name="cluster_selector" readonly="1"/>
+                    <field name="cluster_selector_type" readonly="1"/>
+                    <field name="physical_server"/>
+                </graph>
+            </field>
+        </record>
+        <!-- action window -->
+        <record id="action_kubernets_kuber_exposer" model="ir.actions.act_window">
+            <field name="name">Hostname Publisher</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">kuber.exposer</field>
+            
+            <field name="view_mode">kanban,list,form,graph</field>
+            <field name="context">{"search_default_fieldname":1}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                Click to add a new Tags Built
+                </p><p>
+                Click the Create button to add a new Tags Built
+                </p>
+            </field>
+        </record>        
+    </data>
+</odoo>

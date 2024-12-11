@@ -1,0 +1,8 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+access_all_kuber_docker_image,Kuber Docker Image,model_kuber_docker_image,,1,1,1,1
+access_admin_kuber_docker_image,Kuber Deployment Template,model_kuber_template,,1,1,1,1
+access_admin_kuber_deply,Kuber Deploy,model_kuber_deploy,base.group_system,1,1,1,1
+access_admin_kuber_exposer,Kuber Exposer,model_kuber_exposer,,1,1,1,1
+access_admin_kuber_commands,Kuber Commands,model_kuber_commands,base.group_system,1,1,1,1
+access_admin_kuber_domains,Kuber Domains,model_kuber_domains,,1,1,1,1
+access_admin_kuber_domains,Kuber Domains,model_kuber_domains_ssl,,1,1,1,1

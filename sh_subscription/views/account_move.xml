@@ -1,0 +1,27 @@
+<odoo>
+  <data>
+
+    <record id="account_move_sh_subscription_form" model="ir.ui.view">
+        <field name="name">account.move.form.subscription</field>
+        <field name="model">account.move</field>
+         <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_date']" position="after">
+                <field name="has_subscription"/>
+            </xpath>         
+        </field>
+    </record>
+
+    <record id="account_move_sh_subscription_tree" model="ir.ui.view">
+        <field name="name">account.move.tree.subscription</field>
+        <field name="model">account.move</field>
+         <field name="inherit_id" ref="account.view_invoice_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="has_subscription" />
+            </xpath>         
+        </field>
+    </record>
+
+  </data>
+</odoo>

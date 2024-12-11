@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- report qweb view -->
+        <report id="report_kuber_deploy_menu" string="My addon - Application Deployment"
+         model="kuber.deploy" report_type="qweb-pdf" 
+         file="kuber.deploy"  name="kuber_deployment.kuber_deploy_report" />
+
+        <!-- document template -->
+        <template id="kuber_deployment.kuber_deploy_report_document" >
+            <t t-call="web.external_layout">
+                <t t-set="doc" t-value="doc.with_context({'lang': lang})"/>
+                <div class="page">
+                    <h2>
+                        Application Deployment: <span t-field="doc.name"/>
+                    </h2>
+                    <div class="row mt32 mb32">
+                        <div class="col-auto mw-100 mb-2">
+                            <strong> description</strong>
+                            <p class="m-0" t-field="doc._description" />
+                        </div>
+                    </div>
+                </div>
+                <div class="oe_structure"/>
+                <h2>Tags Built</h2>
+                <table class="table table-sm o_main_table" name="kuber_docker_image_table">
+                    <thead>
+                        <tr>
+                            <td> name = kuber.docker image</td>
+                            <td> description</td>
+                            <td>Name</td>
+                            <td>Version</td>
+                            <td>Application Deployment</td>
+                        </tr>
+                    </thead>
+                    <tbody class="kuber_docker_image_tbody">
+                        <tr t-foreach="doc.kuber_docker_image" t-as="line">
+                            <td><span t-field="line._name = kuber.docker_image" /></td>
+                            <td><span t-field="line._description" /></td>
+                            <td><span t-field="line.name" /></td>
+                            <td><span t-field="line.version" /></td>
+                            <td><span t-field="line.kuber_deploy" /></td>
+                        </tr> <!-- foreach-->
+                    </tbody>
+                </table>
+                <div class="oe_structure"/>
+                <h2>Templates</h2>
+                <table class="table table-sm o_main_table" name="kuber_template_table">
+                    <thead>
+                        <tr>
+                            <td> name</td>
+                            <td> description</td>
+                            <td>Name</td>
+                            <td> type</td>
+                            <td>Content</td>
+                            <td>Application Deployment</td>
+                        </tr>
+                    </thead>
+                    <tbody class="kuber_template_tbody">
+                        <tr t-foreach="doc.kuber_template" t-as="line">
+                            <td><span t-field="line._name" /></td>
+                            <td><span t-field="line._description" /></td>
+                            <td><span t-field="line.name" /></td>
+                            <td><span t-field="line._type" /></td>
+                            <td><span t-field="line.content" /></td>
+                            <td><span t-field="line.kuber_deploy" /></td>
+                        </tr> <!-- foreach-->
+                    </tbody>
+                </table>
+                <div class="oe_structure"/>
+            </t>
+        </template>
+
+        <!-- main template -->
+        <template id="kuber_deployment.kuber_deploy_report">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-set="lang" t-value="doc.create_uid.lang"/>
+                    <t t-call="kuber_deployment.kuber_deploy_report_document" />
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

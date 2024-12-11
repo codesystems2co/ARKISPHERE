@@ -1,0 +1,33 @@
+<odoo>
+  <data>
+
+    <record id="product_template_attribute_value_view_tree_inerith" model="ir.ui.view">
+        <field name="name">product.template.attribute.value.view.tree.inerith</field>
+        <field name="model">product.template.attribute.value</field>
+         <field name="inherit_id" ref="product.product_template_attribute_value_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="sh_is_subscription"/>
+                <field name="sh_multiplier_factor"/>
+                <field name="sh_capacity_gb"/> 
+                <field name="sh_code_identifier"/> 
+            </field>          
+        </field>
+    </record>
+
+    <record id="product_template_attribute_value_view_form_inerith" model="ir.ui.view">
+        <field name="name">product.template.attribute.value.view.form.inerith</field>
+        <field name="model">product.template.attribute.value</field>
+         <field name="inherit_id" ref="product.product_template_attribute_value_view_form"/>
+        <field name="arch" type="xml">
+            <field name="price_extra" position="after">
+                <field name="sh_is_subscription"/>
+                <field name="sh_multiplier_factor"/>
+                <field name="sh_capacity_gb"/> 
+                <field name="sh_code_identifier"/> 
+            </field>            
+        </field>
+    </record>
+
+  </data>
+</odoo>

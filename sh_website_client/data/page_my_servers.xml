@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo> 
+      
+    <template id="view_page_my_servers">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container">
+                   <!-- Page Contents -->     
+                   <br/>
+                    <h3><i class="fa fa-server"></i>   My Space</h3>
+                    <div class="my-servers-page">
+                        <t t-set="partner_servers" t-value="request.env['so.server'].get_so_servers()"/>
+                        <t t-set="index_columns" t-value="1"/>                        
+                        
+                            <t t-foreach="partner_servers" t-as="server">
+                                
+                                    <div class="col-sm so-server-item">                                 
+                                        <div class="card">
+                                        
+                                            <div class="card-body text-center">
+                                            <i class="fa fa-linux"/>
+                                            </div>
+
+                                            <div class="card-body text-center">
+                                                <div class="so_name"><a  t-attf-href="/my/projects?server={{server.id}}"><t t-out="server.name"></t></a></div>
+                                                <div><t t-out="server.brand"></t></div>
+                                                <div><i class="fa fa-server"></i> <t t-out="server.processor_core"></t> Cores</div>
+                                                <div><i class="fa fa-microchip"></i> <t t-out="server.ram_size"></t> RAM</div>
+                                                <div><i class="fa fa-hdd-o"></i> <t t-out="server.disk_size"></t> SSD</div>
+                                            </div>    
+
+                                        </div>
+                                    </div>
+                               
+                                <t t-set="index_columns" t-value="index_columns + 1"/>  
+                            </t>  
+                        <t t-if="index_columns==1">
+                            <p>It seems you still have not any subscription.</p>
+                        </t>
+                    </div>                 
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <record id="page_my_servers" model="website.page">
+        <field name="name">My Space</field>
+        <field name="website_published">True</field>
+        <field name="url">/my/servers</field>
+        <field name="model">so.server</field>
+        <field name="view_id" ref="view_page_my_servers"/>
+        <!-- Provide  template id that you want to render --> 
+    </record>
+
+</odoo>

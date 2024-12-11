@@ -1,0 +1,5 @@
+"id","name","model_id","group_id","perm_read","perm_write","perm_create","perm_unlink"
+"__export__.ir_model_access_211_d1aada91","Server","so.server","","True","True","True","True"
+"__export__.ir_model_access_210_b5c04227","Server owner","Server Owner","","True","True","True","True"
+"__export__.ir_model_access_211_b5c04227","git repository","sh.git_repository","","True","True","True","True"
+"__export__.ir_model_access_211_b5c54227","sh.cloud.provider","sh.cloud.provider","","True","True","True","True"
