@@ -5,7 +5,7 @@ import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_d
 import { markup } from "@odoo/owl";
 
 publicWidget.registry.sh_git_stages = publicWidget.Widget.extend({
-    'selector': '.container',
+    'selector': '.my-stages-page',
     events: {
         'click #sh-new-repository': 'sh_new_repository',
         'click #sh-save-repository': 'create_git_repository',
