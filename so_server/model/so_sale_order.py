@@ -126,7 +126,7 @@ class sh_sale_order(models.Model):
                             _order_line.sudo().update({'so_server':so_server})
 
                             if not self.cloud_provider:
-                            so_server.sale_order.sudo().update({'cloud_provider':int(provider.id)})
+                                so_server.sale_order.sudo().update({'cloud_provider':int(provider.id)})
 
         return response
 
