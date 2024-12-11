@@ -35,11 +35,13 @@ class sh_backup (models.Model):
             _logger.warning("google drive revision")
             _logger.warning(revision.revision) 
             response = {'error':False, 'base':None}
-            file_path = '/data/file-system-backups/' + str(revision.revision)
+            file_path = '/var/lib/odoo/file-system-backups/' + str(revision.revision)
             if os.path.isdir(file_path):
-                try:
-                    shutil.make_archive(file_path, 'zip', file_path)
-                    if os.path.isfile(file_path+'.zip'):
+                os.chmod(file_path, 0o0777)
+                shutil.make_archive(file_path, 'zip', file_path)                    
+                if os.path.isfile(file_path+'.zip'):
+                    os.chmod(file_path + '.zip', 0o0777)
+                    try:                   
                         _folder_id = self.env['sh.backup.revision'].sudo().create_folder(revision.revision)
                         if _folder_id:
                             item['google_drive_folder_id'] = _folder_id
@@ -56,23 +58,26 @@ class sh_backup (models.Model):
 
                         _logger.warning('google drive sharable link >>')
                         _logger.warning(revision.google_drive_share_file_link)
-                    
-                    if os.path.isfile(file_path+'.zip'):
-                        os.remove(file_path+'.zip')
                         
-                except Exception as e:
-                    response['error'] = True
-                    response['message'] = getattr(e, 'message', repr(e))
-                    _logger.warning( response['message'])
-                    if os.path.isfile(file_path+'.zip'):
-                        os.remove(file_path+'.zip')
+                    except Exception as e:
+                        response['error'] = True
+                        response['message'] = getattr(e, 'message', repr(e))
+                        _logger.warning( response['message'])
+                        line = " ON LINE " + format(sys.exc_info()[-1].tb_lineno)
+                        _logger.warning(line)
+
+                        if os.path.isfile(file_path+'.zip'):
+                            os.remove(file_path+'.zip')
+
+                if os.path.isfile(file_path+'.zip'):
+                    os.remove(file_path+'.zip')
             else:
                 response['error'] = True
                 response['message'] = _('Revision does not exist in filesystem.')
                 _logger.warning( response['message'] )
                 if os.path.isfile(file_path+'.zip'):
                         os.remove(file_path+'.zip')
-        return response
+        #return response
 
     def unlink_from_services(self, revision):
         _super = super(sh_backup, self).unlink_from_services()
@@ -99,13 +104,28 @@ class sh_backup_revision(models.Model):
     
     def connect(self):
         try:
-            scope = ['https://www.googleapis.com/auth/drive']
-            service_account_json_key = '/odoosh/custom/addons/sh_backup/models/cohesive-poet-441512-m1-05f1e1d71e90.json'
-            credentials = service_account.Credentials.from_service_account_file(
-                                        filename=service_account_json_key, 
-                                        scopes=scope)
-            service = build('drive', 'v3', credentials=credentials)
-            return service
+            provider = self.env["sh.cloud.provider"].sudo().search_read([('_type','=','goo_drive'), ('_default','=',True)], limit=1)
+            if provider:
+                provider = self.env["sh.cloud.provider"].sudo().browse(int(provider[0]['id']))
+                if provider.credentials:
+                    file_google_credentials = os.path.dirname(os.path.abspath(__file__)) + str('/service_account.json')
+                    _logger.warning('file_google_credentials >>')
+                    _logger.warning(file_google_credentials)
+                    with open(file_google_credentials,'wb+') as f:
+                        f.write(base64.b64decode(provider.credentials))
+
+                    scope = ['https://www.googleapis.com/auth/drive']                
+                    credentials = service_account.Credentials.from_service_account_file(
+                                                filename=file_google_credentials, 
+                                                scopes=scope)
+                    service = build('drive', 'v3', credentials=credentials)
+                    return service
+                else:
+                    _logger.warning("Google: No credentials")
+                    return None 
+            else:
+                _logger.warning("Google: No no default provider")
+                return None
         except HttpError as error:
             _logger.warning(f"An error occurred connecting: {error}")
             return None
@@ -212,7 +232,7 @@ class sh_backup_revision(models.Model):
             item = {}
             revision = self.env["sh.backup.revision"].sudo().browse(int(revision['id']))
             response = {'error':False, 'base':None}
-            file_path = '/data/file-system-backups/' + str(revision)
+            file_path = '/var/lib/odoo/file-system-backups/' + str(revision)
             if os.path.isdir(file_path):
                 try:
                     shutil.make_archive(file_path, 'zip', file_path)

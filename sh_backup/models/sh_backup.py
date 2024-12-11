@@ -20,7 +20,7 @@ class sh_backup (models.Model):
 
     def restore_from_local(self, branch_id, revision):
         response = {'error':False}
-        file_path = '/data/file-system-backups/' + str(revision)
+        file_path = '/var/lib/odoo/file-system-backups/' + str(revision)
         if os.path.isdir(file_path):
             branch = self.env['sh.git_branch'].sudo().browse(int(branch_id))
             _logger.warning(branch.kuber_exposers.ip )
@@ -55,7 +55,7 @@ class sh_backup (models.Model):
 
     def download_from_local(self, revision):
         response = {'error':False, 'base':None}
-        file_path = '/data/file-system-backups/' + str(revision)
+        file_path = '/var/lib/odoo/file-system-backups/' + str(revision)
         if os.path.isdir(file_path):
             try:
                 shutil.make_archive(file_path, 'zip', file_path)
@@ -83,17 +83,19 @@ class sh_backup (models.Model):
             server_proxy = xmlrpc.client.ServerProxy(str(kube_service)+str('/xmlrpc/db'))
             base64_encoded = server_proxy.dump(admin_password, db_name, 'zip')
             os.umask(0)
-            if (not os.path.isdir(str("/data/file-system-backups"))):
-                os.mkdir(str("/data/file-system-backups"),mode=0o777)
+            if (not os.path.isdir(str("/var/lib/odoo/file-system-backups"))):
+                os.mkdir(str("/var/lib/odoo/file-system-backups"),mode=0o777)
             os.umask(0)
-            if (not os.path.isdir(str("/data/file-system-backups/" + str(revision)))):
-                os.mkdir(str("/data/file-system-backups/") + str(revision),mode=0o777)                
-            with open('/data/file-system-backups/' + str(revision) + '/' + str(db_name) + str('.zip'), 'wb') as backup_file:
+            if (not os.path.isdir(str("/var/lib/odoo/file-system-backups/" + str(revision)))):
+                os.mkdir(str("/var/lib/odoo/file-system-backups/") + str(revision),mode=0o777)                
+            with open('/var/lib/odoo/file-system-backups/' + str(revision) + '/' + str(db_name) + str('.zip'), 'wb') as backup_file:
                 decode = base64.b64decode(base64_encoded)
                 backup_file.write(decode)
         except Exception as e:
             message = getattr(e, 'message', repr(e))
+            line = " ON LINE " + format(sys.exc_info()[-1].tb_lineno)
             _logger.warning(message)
+            _logger.warning(line)
             if '<Fault' in message:
                 try:
                     message = str(message).split(':')[0]
@@ -225,7 +227,7 @@ class sh_backup (models.Model):
                                 _logger.warning('drop >>')
                                 _logger.warning(drop)
                                 if drop:
-                                    path = '/data/file-system-backups/' + str(revision.revision)
+                                    path = '/var/lib/odoo/file-system-backups/' + str(revision.revision)
                                     _logger.warning(path)
                                     if os.path.isdir(path):
                                         shutil.rmtree(path)

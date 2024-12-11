@@ -9,8 +9,10 @@ class hetzner(models.Model):
     name = fields.Char(string='Name')
     token = fields.Char(string="Token")
     state = fields.Boolean(string='State')
-    _type = fields.Selection(string="Type", selection=[('server','Server'),('s3','Storage')], default="server")
-    _default = fields.Boolean(string='Default')
+    _type = fields.Selection(string="Type", selection=[('server','Hetzner Server'),('s3','Hetzner Storage'),('goo_drive','Google Drive')], default="server")
+    credentials = fields.Binary(string='Credentials')
+    credentials_filename = fields.Char()
+    _default = fields.Boolean(string='Default')    
 
     #@api.onchange('_default')
     #def _onchange__default(self):

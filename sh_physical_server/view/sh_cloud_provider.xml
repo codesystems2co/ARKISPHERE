@@ -9,7 +9,6 @@
             <field name="arch" type="xml">
                 <list string="Cloud Providers">
                     <field name="name" />
-                    <field name="token" />
                     <field name="_type"/>
                     <field name="state"  readonly="1" widget="boolean_toggle"/>
                     <field name="_default"  readonly="1" widget="boolean_toggle"/>
@@ -38,7 +37,9 @@
                         </div>
                         <group>
                             <group>
-                                <field name="token" />
+                                <field name="token" invisible="_type=='goo_drive'"/>
+                                <field name="credentials"  filename="credentials_filename"  invisible="_type!='goo_drive'"/>
+                                <field name="credentials_filename" invisible="1"/>
                                 <field name="state"  widget="boolean_toggle"/>
                                 <field name="_type"/>
                                 <field name="_default"  widget="boolean_toggle"/>
