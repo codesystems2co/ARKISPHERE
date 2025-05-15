@@ -143,3 +143,52 @@ class sh_sale_order(models.Model):
                     request.env["account.move"].create(invoice_vals)
         except:
             pass
+    
+    def action_confirm(self):
+        _logger.info("Starting sale order confirmation process for order %s", self.name)
+        response = super(sh_sale_order, self).action_confirm()
+        _logger.info("Super action_confirm completed for order %s", self.name)
+        
+        try:
+            # Check for server lines
+            server_lines = [line for line in self.order_line if line.so_server]
+            _logger.info("Found %s server lines in order %s", len(server_lines), self.name)
+            
+            if server_lines:
+                _logger.info("Attempting to send server details email for order %s", self.name)
+                
+                # Get email template
+                try:
+                    template = self.env.ref('sh_subscription.email_template_sale_order_server_details')
+                    _logger.info("Email template found: %s", template.name if template else 'Not found')
+                except Exception as e:
+                    _logger.error("Failed to find email template: %s", str(e))
+                    return response
+                
+                if template:
+                    # Log server details that will be sent
+                    for line in server_lines:
+                        _logger.info("Server details for line %s:", line.id)
+                        if line.so_server and line.so_server.physical_server:
+                            server = line.so_server.physical_server
+                            _logger.info("- Server Name: %s", server.name)
+                            _logger.info("- IP: %s", server.ip)
+                            _logger.info("- Specs: Cores=%s, RAM=%s, Disk=%s", 
+                                       server.processor_core, server.ram_size, server.disk_size)
+                    
+                    # Send email
+                    try:
+                        _logger.info("Sending email to customer %s (%s)", 
+                                   self.partner_id.name, self.partner_id.email)
+                        template.send_mail(self.id, force_send=True)
+                        _logger.info("Email sent successfully for order %s", self.name)
+                    except Exception as e:
+                        _logger.error("Failed to send email: %s", str(e))
+            else:
+                _logger.info("No server lines found in order %s, skipping email", self.name)
+                
+        except Exception as e:
+            _logger.error("Error in action_confirm for order %s: %s", self.name, str(e))
+        
+        return response
+        

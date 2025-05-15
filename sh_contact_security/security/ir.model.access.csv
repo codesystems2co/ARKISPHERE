@@ -1,0 +1,2 @@
+"id","name","model_id","perm_read","perm_create","perm_unlink","perm_write"
+"__export__.ir_model_access_1318_8304015c","sh.blocked.ip","Blocked IP Addresses","True","True","True","True"

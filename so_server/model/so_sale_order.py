@@ -127,6 +127,7 @@ class sh_sale_order(models.Model):
 
                             if not self.cloud_provider:
                                 so_server.sale_order.sudo().update({'cloud_provider':int(provider.id)})
+                        # add mail notifier
 
         return response
 
@@ -148,14 +149,14 @@ class sh_sale_order(models.Model):
                                                                         'processor_core':str(_params['processor_core']),
                                                                         'processor_core_gb':str(_params['processor_core_gb']),
                                                                         
-                                                                        'order_line':int(_params['order_line'].id),
+                                                                        #'order_line':int(_params['order_line'].id),
                                                                         'physical_server': int(physical_server.id),
                                                                         'owner': [(4,_partner_id)],
                                                                     })
-                physical_server.update({'is_busy':True, 'so_server':int(so_server.id)})
+                physical_server.update({'is_busy':True})
                 return so_server
         except Exception as e:
-            _logger.ValidationError(format(sys.exc_info()[-1].tb_lineno))
+            _logger.error(format(sys.exc_info()[-1].tb_lineno))
             raise ValidationError( str("\n Name: ") + str(physical_server.so_server.name) + str("\n Brand: ") + str(physical_server.so_server.brand) + str("\n Ram: ") + str(physical_server.so_server.ram_size) + str("\n Disk: ") + str(physical_server.so_server.disk_size) + str("\n MESSAGE: ") + getattr(e, 'message', repr(e)))
             
     

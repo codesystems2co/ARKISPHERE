@@ -7,74 +7,140 @@
                 <div class="container">
                     <!-- Page Contents -->    
                     <h3>My Projects</h3>
-                    <div class="my-projects-page">
+                    <div class="my-projects-page my-stages-page">
                         <div class="o_form_buttons_view">
                             <a href="#" id="sh-new-repository" class="btn btn-primary">New</a>
                             <a href="#" id="sh-cancel-repository" class="btn btn-secondary">Cancel</a>
                         </div>
                         <div class="sh-form-new-repository">
                             <form>
+                                <div class="create-project-header">
+                                    <h4><i class="fa fa-code-fork"></i> Create New Project</h4>
+                                    <p class="mb-0">Deploy your Odoo application from scratch or from an existing repository</p>
+                                </div>
 
                                 <div>
                                     <div class="form-group">
-                                        <label>Restore Project From</label>
+                                        <label><i class="fa fa-cube option-icon"></i>Create Project From</label>
                                         <select id="restore_way" class="form-control">
-                                            <option value="standar">Standar</option>
-                                            <option value="odoo_sh">Odoo.sh</option>
+                                            <option value="standard"><i class="fa fa-plus-circle"></i> Scratch (New Project)</option>
+                                            <option value="odoo_sh"><i class="fa fa-github"></i> On-Premise / Odoo.sh (Existing Project)</option>
                                         </select>
                                     </div>                                  
                                 </div>
+
+                                <!-- GitHub Loader -->
+                                <div class="github-loader">
+                                    <i class="fa fa-spinner fa-spin" title="Loading"></i>
+                                    <span>Loading repositories from GitHub...</span>
+                                </div>
+
                                 <div>
                                     <div class="form-group from-scratch">
-                                        <hr></hr>
-                                        <label for="sh_repository_name">Name</label>
-                                        <input type="text" class="form-control" id="sh_repository_name"/>
+                                        <div class="source-section">
+                                            <div class="section-title"><i class="fa fa-cog" title="Configuration"></i> Project Configuration</div>
+                                            <div class="form-group">
+                                                <label for="sh_repository_name"><i class="fa fa-tag option-icon" title="Project Name"></i>Project Name</label>
+                                                <input type="text" class="form-control" id="sh_repository_name" placeholder="Enter project name"/>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label for="sh_repository_visibility"><i class="fa fa-eye option-icon" title="Visibility"></i>Visibility</label>
+                                                <select class="form-control" id="sh_repository_visibility">
+                                                    <option value="true">Private</option>
+                                                    <option value="false">Public</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>                                    
 
                                     <div class="form-group from-repository">
-                                    <hr></hr>
-                                        <div class="github_repositories">
-                                            <label for="github_repositories"><i class="fa fa-github"></i> Repository</label>
+                                        <div class="source-section">
+                                            <div class="section-title"><i class="fa fa-github" title="GitHub"></i> Repository Information</div>
+                                            <div class="github_repositories mb-3">
+                                                <label for="github_repositories"><i class="fa fa-code-fork option-icon" title="Repository"></i>Repository</label>
                                             <select id="github_repositories" name="github_repositories" class="form-control"/>
                                         </div>
-                                        <div class="github_repository_branches">
-                                            <label for="github_repository_branches"><i class="fa fa-code-fork"></i> Main Branch</label>
+                                            <div class="github_repository_branches mb-3">
+                                                <label for="github_repository_branches"><i class="fa fa-code-branch option-icon" title="Branch"></i>Main Branch</label>
                                             <select id="github_repository_branches" name="github_repository_branches" class="form-control"/>
                                         </div>
 
-                                        <div class="form-group from-repository">
-                                            <label for="database"><i class="fa fa-database"></i> Database</label>
-                                            <input id="database" name="database" type="file" class="form-control"></input>
+                                            <div class="form-group">
+                                                <label for="database"><i class="fa fa-database option-icon" title="Database"></i>Database</label>
+                                                <div class="custom-file">
+                                                    <input id="database" name="database" type="file" class="form-control" aria-describedby="databaseHelp"></input>
+                                                    <small id="databaseHelp" class="form-text text-muted">Upload your existing database backup</small>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <hr></hr>
-                                    </div>
-
-                                    <div class="form-group from-scratch">
-                                        <label for="sh_repository_visibility">Visibility</label>
-                                        <select class="form-control" id="sh_repository_visibility">
-                                            <option value="true">Private</option>
-                                            <option value="false">Public</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group ">
-                                        <label for="deployments_options">Deployment</label>
-                                        <select class="form-control" id="deployments_options">
-                                        </select>
-                                        <small class="deploy_so_server"></small>
                                     </div>
 
                                     <div class="form-group">
-                                        <t t-set="_so_server" t-value="request.env['so.server'].sudo().get_current_server()"></t>
-                                        <div id="sh_so_server" class=""><t t-out="_so_server"/></div>                              
+                                        <div class="source-section">
+                                            <div class="section-title"><i class="fa fa-server" title="Deployment"></i> Deployment Settings</div>
+                                            <label for="deployments_options"><i class="fa fa-cloud option-icon" title="Cloud Application"></i>Application</label>
+                                        <select class="form-control" id="deployments_options">
+                                        </select>
+                                        <small class="deploy_so_server"></small>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <t t-set="server_info" t-value="request.env['so.server'].sudo().get_current_server()"></t>
+                                        <div id="sh_so_server" class="" t-if="server_info and not isinstance(server_info, dict)"><t t-out="server_info"/></div>
+                                        <div id="sh_so_server" class="d-none" t-if="server_info and isinstance(server_info, dict)"><t t-out="server_info.get('id')"/></div>                              
+                                    </div>
+                                    
+                                    <!-- Server Hardware Resources Section -->
+                                    <div class="form-group server-resources-section" t-if="server_info and isinstance(server_info, dict)">
+                                        <div class="minimal-resources-container">
+                                            <div class="resources-row" t-if="server_info.get('resources')">
+                                                <div class="resource-minimal">
+                                                    <div class="resource-circle">
+                                                        <i class="fa fa-microchip" title="RAM"></i>
+                                                    </div>
+                                                    <div class="resource-text">
+                                                        <span class="resource-value"><t t-out="server_info.get('resources', {}).get('ram')"/></span>
+                                                        <span class="resource-label">RAM</span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="resource-minimal">
+                                                    <div class="resource-circle">
+                                                        <i class="fa fa-hdd-o" title="Storage"></i>
+                                                    </div>
+                                                    <div class="resource-text">
+                                                        <span class="resource-value"><t t-out="server_info.get('resources', {}).get('disk')"/></span>
+                                                        <span class="resource-label">STORAGE</span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="resource-minimal">
+                                                    <div class="resource-circle">
+                                                        <i class="fa fa-microchip" title="CPU"></i>
+                                                    </div>
+                                                    <div class="resource-text">
+                                                        <span class="resource-value"><t t-out="server_info.get('resources', {}).get('cpu')"/></span>
+                                                        <span class="resource-label">CPU</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="ip-minimal" t-if="server_info.get('physical', {}).get('ip')">
+                                                <span class="ip-label">Internal IP: </span>
+                                                <span class="ip-value"><t t-out="server_info.get('physical', {}).get('ip')"/></span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>                               
                                 
-                                <a href="#" id="sh-save-repository" class="btn btn-primary"><i class="fa fa-rocket"/> Deploy</a> 
+                                <a href="#" id="sh-save-repository" class="btn btn-primary btn-lg" role="button" aria-label="Deploy Project"><i class="fa fa-rocket" title="Deploy"></i> Deploy Project</a> 
                                 <div class="row-spinner">
-                                    <i class="fa fa-spinner"></i> Loading...
+                                    <i class="fa fa-spinner fa-spin" title="Loading"></i>
                                     <div>
-                                        <small>Kindly, wait this page will reload shortly</small>
+                                        <h5>Deploying your project...</h5>
+                                        <small>Please wait, this page will reload shortly</small>
                                     </div>
                                 </div>
                             </form>
@@ -89,13 +155,13 @@
                                         <div class="card">
                                         
                                             <div class="card-body text-center">
-                                                <i class="fa fa-github"/>
+                                                <i class="fa fa-github" title="GitHub Repository"/>
                                             </div>
 
                                             <div class="card-body text-center">
                                                 <div class="so_name"><a  t-attf-href="/project/stages?project={{repository[0].id}}"><t t-out="repository[0].name"></t></a></div>
-                                                <div><i class="fa fa-linux"></i> <t t-out="repository[0].so_server.name"></t></div>
-                                                <div><a target="_blank"  t-attf-href="{{repository[0].url}}"><i class="fa fa-github"></i> Go!</a></div>
+                                                <div><i class="fa fa-linux" title="Operating System"></i> <t t-out="repository[0].so_server.name"></t></div>
+                                                <div><a target="_blank" t-attf-href="{{repository[0].url}}"><i class="fa fa-github" title="Visit GitHub"></i> Go!</a></div>
                                             </div>    
 
                                         </div>

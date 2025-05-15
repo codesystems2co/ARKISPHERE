@@ -235,37 +235,63 @@ publicWidget.registry.sh_git_stages = publicWidget.Widget.extend({
             var reader = new FileReader();
             if(document.querySelector('input#database').files[0] == undefined || document.querySelector('input#database').files[0] == null)
             {
-                notification.add(_t("Kindly, browse a valid .zip file type"), { 'title': _t('Restore Project'), sticky: false })
-                $('input#database').val('')
+                // Skip file validation if no file is uploaded
+                var params = { 'restore_way': restore_way,'_name': repository_name, '_visibility': repository_visibility, '_server_id': server_id, '_kuber_deployment': kuber_deployment, 'main_branch':main_branch, 'database64':null };
+                self.handle_create_git_repository_form();
+                self._create_git_repository(params);
+                return;
             }
             try 
             {
                 var file_types = ['zip'];
-                    var extension = document.querySelector('input#database').files[0].name.split('.').pop().toLowerCase(),
-                    is_success = file_types.indexOf(extension) > -1;
-                    if(is_success)
-                    {
-                        var database = document.querySelector('input#database').files[0];
-                        reader.readAsDataURL(database);
-                        reader.onload = function ()
-                        {                            
-                            database64 = reader.result;                    
-                            var params = { 'restore_way': restore_way,'_name': repository_name, '_visibility': repository_visibility, '_server_id': server_id, '_kuber_deployment': kuber_deployment, 'main_branch':main_branch, 'database64':database64 }
-                            self._create_git_repository(params);   
-                            self.handle_create_git_repository_form();
-                        }
+                var file = document.querySelector('input#database').files[0];
+                var extension = file.name.split('.').pop().toLowerCase();
+                var is_success = file_types.indexOf(extension) > -1;
+                
+                // Check file size - 2GB = 2 * 1024 * 1024 * 1024 bytes
+                if (file.size > 2 * 1024 * 1024 * 1024) {
+                    var button_contact = [
+                        {
+                            name: _t("Contact Us"),
+                            primary: true,
+                            onClick: () => {
+                                window.location.href = '/contactus';
+                            },
+                        },
+                    ];
+                    notification.add(_t("The database file exceeds 2GB. Please contact our support team for assistance with large file uploads."), { 
+                        'title': _t('File Too Large'), 
+                        sticky: true, 
+                        buttons: button_contact 
+                    });
+                    $('input#database').val('');
+                    $("html, body").animate({ scrollTop: 0 }, "fast");
+                    return;
+                }
+                
+                if(is_success)
+                {
+                    reader.readAsDataURL(file);
+                    reader.onload = function ()
+                    {                            
+                        database64 = reader.result;                    
+                        var params = { 'restore_way': restore_way,'_name': repository_name, '_visibility': repository_visibility, '_server_id': server_id, '_kuber_deployment': kuber_deployment, 'main_branch':main_branch, 'database64':database64 };
+                        self._create_git_repository(params);   
+                        self.handle_create_git_repository_form();
                     }
-                    else
-                    {
-                        notification.add(_t("Kindly, browse a valid .zip file type"), { 'title': _t('Restore Project'), sticky: false })
-                        $('input#database').val('');
-                        $("html, body").animate({ scrollTop: 0 }, "fast");
-                    }                
+                }
+                else
+                {
+                    notification.add(_t("Kindly, browse a valid .zip file type"), { 'title': _t('Restore Project'), sticky: false })
+                    $('input#database').val('');
+                    $("html, body").animate({ scrollTop: 0 }, "fast");
+                }                
             }
             catch (error) 
             {
-                notification.add(_t("Kindly, browse a valid .zip file type"), { 'title': _t('Restore Project'), sticky: false })
+                notification.add(_t("Kindly, browse a valid .zip file type with your project database backup"), { 'title': _t('Project Database'), sticky: false });
                 $("html, body").animate({ scrollTop: 0 }, "fast");
+                console.log('error on create project: \n' + String(error));
             }
         }
         else
@@ -326,6 +352,7 @@ publicWidget.registry.sh_git_stages = publicWidget.Widget.extend({
                                     location.reload();
                                 },
                             },
+                            /*
                             {
                                 name: _t("Update Token"),
                                 primary: true,
@@ -336,6 +363,7 @@ publicWidget.registry.sh_git_stages = publicWidget.Widget.extend({
                                     );
                                 },
                             },
+                            */
                         ];
 
                         var button_reload_success = [
@@ -368,14 +396,18 @@ publicWidget.registry.sh_git_stages = publicWidget.Widget.extend({
     handle_restore_way: function(event)
     {
         var restore_way = $(event.currentTarget).val();
-        if(restore_way == "standar")
+        if(restore_way == "standard")
         {
             $(".from-repository").hide();
-            $(".from-scratch").fadeIn();
+            $(".from-scratch").fadeIn(300);
         }
         if(restore_way == "odoo_sh")
         {
-            $(".from-scratch").slideUp();
+            $(".from-scratch").slideUp(300);
+            // Show loader and disable deploy button
+            $(".github-loader").fadeIn(300);
+            // For anchor tag disabling
+            $("#sh-save-repository").addClass('disabled').css('pointer-events', 'none');
             this.get_github_project();
         }
     },
@@ -487,7 +519,8 @@ publicWidget.registry.sh_git_stages = publicWidget.Widget.extend({
         dialog.add(ConfirmationDialog, {
             body: markup("<input name='_github_password' placeholder='Gihub Password' class='form-control'/>"),
             confirm: () => {
-                var _github_password = $("input#_github_password").val();
+                var _github_password = $("input[name=_github_password]").val();
+                console.log(_github_password)
                 orm.call('git.autor', 'check_github_password', ["", _github_password])
                 .then(
                     function (state) {
@@ -532,40 +565,64 @@ publicWidget.registry.sh_git_stages = publicWidget.Widget.extend({
     get_github_project: function () {
         var self = this
         var orm = this.bindService("orm");
+        
+        // Show loader and disable button
+        $(".github-loader").fadeIn(300);
+        // For anchor tag disabling
+        $("#sh-save-repository").addClass('disabled').css('pointer-events', 'none');
+        
         orm.call('sh.git_repository', 'get_github_project', [""])
             .then(
-                    function (_response) 
+                function (_response) 
+                {
+                    var repository_options = String()
+                    var branch_options = String()
+                    if(String(_response.error) == String('true'))
                     {
-                        var repository_options = String()
-                        var branch_options = String()
-                        if(String(_response.error) == String('true'))
-                        {}
-                        else
+                        // Handle error and re-enable button
+                        $(".github-loader").fadeOut(300);
+                        // Re-enable anchor tag
+                        $("#sh-save-repository").removeClass('disabled').css('pointer-events', 'auto');
+                    }
+                    else
+                    {
+                        for(var i=0; i<_response['data'].length; i++)
                         {
-                            for(var i=0; i<_response['data'].length; i++)
-                            {
-                                var repository = _response.data[i][0]['repository'];
-                                var branches = _response.data[i][1]['branches'];
-                                
-                                repository_options += String("<option value="+String(repository.name)+">");
-                                repository_options += String(repository.name);
-                                repository_options += String("</option>");
+                            var repository = _response.data[i][0]['repository'];
+                            var branches = _response.data[i][1]['branches'];
+                            
+                            repository_options += String("<option value="+String(repository.name)+">");
+                            repository_options += String(repository.name);
+                            repository_options += String("</option>");
 
-                                for(var j=0; j<branches.length; j++)
-                                {
-                                    var branch = branches[j];
-                                    branch_options += String("<option value="+String(branch.name)+" value="+String(branch.sha)+" repository="+String(repository.name)+">");
-                                    branch_options += String(branch.name);
-                                    branch_options += String("</option>");
-                                }
+                            for(var j=0; j<branches.length; j++)
+                            {
+                                var branch = branches[j];
+                                branch_options += String("<option value="+String(branch.name)+" value="+String(branch.sha)+" repository="+String(repository.name)+">");
+                                branch_options += String(branch.name);
+                                branch_options += String("</option>");
                             }
                         }
-                        $('select#github_repositories').html(repository_options);
-                        $('select#github_repository_branches').html(branch_options);
-                        $(".from-repository").fadeIn();  
-                        self.handle_repository_branches_tree(null)
+                        
+                        $("select#github_repositories").html(repository_options);
+                        $("select#github_repository_branches").html(branch_options);
+                        
+                        // Hide loader, show form, and re-enable button
+                        $(".github-loader").fadeOut(300, function() {
+                            $(".from-repository").slideDown(400);
+                            // Re-enable anchor tag
+                            $("#sh-save-repository").removeClass('disabled').css('pointer-events', 'auto');
+                        });
                     }
-                 )
+                }
+            )
+            .catch(function(error) {
+                console.error("Error fetching GitHub projects:", error);
+                // Hide loader and re-enable button in case of error
+                $(".github-loader").fadeOut(300);
+                // Re-enable anchor tag
+                $("#sh-save-repository").removeClass('disabled').css('pointer-events', 'auto');
+            });
     },
     sh_tab_stages: function (event) {
         event.preventDefault();

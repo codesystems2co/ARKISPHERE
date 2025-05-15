@@ -73,19 +73,32 @@ publicWidget.registry.business_subscription = publicWidget.Widget.extend({
         this._super(...arguments);
     },
     beginner_subscription: function(){
+        var subscription_type =  $('input#subscription-type').val();
         var _version = $("select#beginner-subscription").val();
         var _url = ''
         if(_version=='18')
         {
             _url = '/shop/odoo-18-0-community-9#attribute_values=0,0,0,0,0,23';
+            if (subscription_type=='enterprise')
+            {
+                _url = '/shop/odoo-18-0-enterprise-17#attribute_values=0,0,0,0,0,23'; 
+            }
         }
         if(_version=='17')
         {
             _url = '/shop/odoo-17-0-community-5#attribute_values=0,0,0,0,0,23';
+            if (subscription_type=='enterprise')
+                {
+                    _url = '/shop/odoo-17-0-enterprise-18#attribute_values=0,0,0,0,0,23'; 
+                }
         }
         else if(_version=='16')
         {
             _url = '/shop/product/odoo-16-0-community-11#attribute_values=0,0,0,0,0,23';
+            if (subscription_type=='enterprise')
+                {
+                    _url = '/shop/odoo-18-0-enterprise-19#attribute_values=0,0,0,0,0,23'; 
+                }
         }
         else if(_version=='15')
         {
@@ -113,19 +126,32 @@ publicWidget.registry.business_subscription = publicWidget.Widget.extend({
     },
     professional_subscription: function()
     {
+        var subscription_type =  $('input#subscription-type').val();
         var _version = $("select#professional-subscription").val();
         var _url = ''
         if(_version=='18')
         {
             _url = '/shop/odoo-18-0-community-9#attribute_values=0,0,0,0,0,24';
+            if (subscription_type=='enterprise')
+                {
+                    _url = '/shop/odoo-18-0-enterprise-17#attribute_values=0,0,0,0,0,24'; 
+                }
         }
         if(_version=='17')
         {
             _url = '/shop/odoo-17-0-community-5#attribute_values=0,0,0,0,0,24';
+            if (subscription_type=='enterprise')
+                {
+                    _url = '/shop/odoo-17-0-enterprise-18#attribute_values=0,0,0,0,0,24'; 
+                }
         }
         else if(_version=='16')
         {
             _url = '/shop/product/odoo-16-0-community-11#attribute_values=0,0,0,0,0,24';
+            if (subscription_type=='enterprise')
+                {
+                    _url = '/shop/odoo-16-0-enterprise-19#attribute_values=0,0,0,0,0,24'; 
+                }
         }
         else if(_version=='15')
         {
@@ -153,19 +179,32 @@ publicWidget.registry.business_subscription = publicWidget.Widget.extend({
     },
     expert_subscription:function()
     {
+        var subscription_type =  $('input#subscription-type').val();
         var _version = $("select#expert-subscription").val();
         var _url = ''
         if(_version=='18')
         {
             _url = '/shop/odoo-18-0-community-9#attribute_values=0,0,0,0,0,25';
+            if (subscription_type=='enterprise')
+                {
+                    _url = '/shop/odoo-18-0-enterprise-17#attribute_values=0,0,0,0,0,25'; 
+                }
         }
         if(_version=='17')
         {
             _url = '/shop/odoo-17-0-community-5#attribute_values=0,0,0,0,0,25';
+            if (subscription_type=='enterprise')
+                {
+                    _url = '/shop/odoo-17-0-enterprise-18#attribute_values=0,0,0,0,0,25'; 
+                }
         }
         else if(_version=='16')
         {
             _url = '/shop/product/odoo-16-0-comunity-11#attribute_values=0,0,0,0,0,25';
+            if (subscription_type=='enterprise')
+                {
+                    _url = '/shop/odoo-16-0-enterprise-19#attribute_values=0,0,0,0,0,25'; 
+                }
         }
         else if(_version=='15')
         {

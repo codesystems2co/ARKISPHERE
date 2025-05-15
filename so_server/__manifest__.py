@@ -6,6 +6,7 @@
 	"depends": [
 				'base', 
                 'sale', 
+				'product',
                 'sh_physical_server', 
                 'sh_git',
                 'hetzner'

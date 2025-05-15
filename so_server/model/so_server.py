@@ -47,6 +47,6 @@ class so_server(models.Model):
     def update_disk_size(self, ):
         pass
         
-    physical_server = fields.Many2one(comodel_name="sh.physical_server",  inverse_name="so_server",  string="Physical Server",  help="")
-    git_repositories = fields.Many2one(comodel_name="sh.git_repository",  inverse_name="so_server",  string="Repository",  help="")
-    owner = fields.Many2many(comodel_name="so.owner",  inverse_name="so_servers",  string="Owner",  help="")
+    physical_server = fields.Many2one(comodel_name="sh.physical_server", string="Physical Server", help="")
+    git_repositories = fields.Many2one(comodel_name="sh.git_repository", inverse_name="so_server", string="Repository", help="")
+    owner = fields.Many2many(comodel_name="so.owner", inverse_name="so_servers", string="Owner", help="")

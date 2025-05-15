@@ -48,4 +48,4 @@ class sh_physical_server(models.Model):
 
     disk_size_available = fields.Float( string="Disk Available",  help="", readonly=True, compute="_disk_size_available")
     
-    so_server = fields.Many2one(comodel_name="so.server",  inverse_name="physical_server",  string="Operating System Server",  help="")
+    so_server = fields.One2many(comodel_name="so.server", inverse_name="physical_server", string="Operating System Server", help="")

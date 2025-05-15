@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- List View -->
+        <record id="view_blocked_ip_list" model="ir.ui.view">
+            <field name="name">sh.blocked.ip.list</field>
+            <field name="model">sh.blocked.ip</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="blocked_date"/>
+                    <field name="attempt_count"/>
+                    <field name="last_attempt"/>
+                    <field name="active" invisible="0"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Form View -->
+        <record id="view_blocked_ip_form" model="ir.ui.view">
+            <field name="name">sh.blocked.ip.form</field>
+            <field name="model">sh.blocked.ip</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" 
+                                    class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_toggle"/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <h1><field name="name" placeholder="IP Address"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="blocked_date"/>
+                                <field name="attempt_count"/>
+                                <field name="last_attempt"/>
+                            </group>
+                            <group>
+                                <field name="reason"/>
+                                <field name="suspicious_data"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record id="view_blocked_ip_search" model="ir.ui.view">
+            <field name="name">sh.blocked.ip.search</field>
+            <field name="model">sh.blocked.ip</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="reason"/>
+                    <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Blocked Date" name="group_by_date" context="{'group_by': 'blocked_date:day'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_blocked_ip" model="ir.actions.act_window">
+            <field name="name">Blocked IPs</field>
+            <field name="res_model">sh.blocked.ip</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="view_blocked_ip_search"/>
+            <field name="context">{'search_default_active': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No blocked IPs found
+                </p>
+                <p>
+                    IPs will be automatically blocked when suspicious contact creation attempts are detected.
+                </p>
+            </field>
+        </record>
+
+        <!-- View references -->
+        <record id="action_blocked_ip_list_view" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">list</field>
+            <field name="view_id" ref="view_blocked_ip_list"/>
+            <field name="act_window_id" ref="action_blocked_ip"/>
+        </record>
+
+        <record id="action_blocked_ip_form_view" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_blocked_ip_form"/>
+            <field name="act_window_id" ref="action_blocked_ip"/>
+        </record>
+
+        <!-- Menu -->
+        <menuitem id="menu_security_blocked_ip"
+                  name="Blocked IPs"
+                  parent="base.menu_users"
+                  action="action_blocked_ip"
+                  sequence="20"/>
+    </data>
+</odoo> 

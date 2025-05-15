@@ -63,7 +63,7 @@ class sh_git_repository(models.Model):
             # repository from github
             try:
                 git_repository = None
-                if params['restore_way'] == 'standar':
+                if params['restore_way'] == 'standard':
                     try:
                         git_repository = git_user.create_repo(name=str(params['_name']), private=_visibility, license_template='bsd-2-clause', auto_init=True) 
                         _logger.warning("Github Repository >>")
@@ -74,7 +74,10 @@ class sh_git_repository(models.Model):
                         return {'error':True, 'message':_("It seems your access token was expired or changed. Also make sure repository name does not exist on Github.")}
                 else:
                     try:
-                        git_repository = git_user.get_repo(name=str(params['_name'])) 
+                        _logger.warning("Github USER >>")
+                        _logger.warning(git_user)
+                        _logger.warning(str(params['_name']))
+                        git_repository = git_user.get_repo(name=str(params['_name']))
                         _logger.warning("Github Existing Repository >>")
                         _logger.warning(git_repository)               
                     except Exception as e:  
@@ -87,7 +90,7 @@ class sh_git_repository(models.Model):
                 git_response['_repository'] = _repository
                 # branch from github
                 _branch = None
-                if params['restore_way'] == 'standar':
+                if params['restore_way'] == 'standard':
                     _branch = self.create_git_project_branch(git_repository, 'main')
                 else:
                     try:                        

@@ -212,6 +212,14 @@ class sh_git_branch(models.Model):
                     _logger.warning(line)
                 for line in iter(stderr.readline, ""):
                     _logger.warning(line)
+                
+                command = str('/snap/bin/microk8s.kubectl exec -i ') + str(branch.kuber_exposers.cluster_selector) + str(' -n ') + str(str(_repository.autor.username) + str(_repository.id)) + str(' -- /bin/bash -c  "odoo --stop-after-init -c /etc/odoo/odoo.conf --db_host=postgres -w password -r odoo  -d '+ str(_database) +' -i '+ str(_service) +'"')
+                _logger.warning(command)
+                stdin, stdout, stderr = ssh.exec_command(command)
+                for line in iter(stdout.readline, ""):
+                    _logger.warning(line)
+                for line in iter(stderr.readline, ""):
+                    _logger.warning(line)
 
             command = str('/snap/bin/microk8s.kubectl exec -i ') + str(branch.kuber_exposers.cluster_selector) + str(' -n ') + str(str(_repository.autor.username) + str(_repository.id)) + str(' -- /bin/bash -c  "kill -HUP 1"')
             _logger.warning(command)

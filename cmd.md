@@ -1,0 +1,1 @@
+odoo --no-http --stop-after-init -c /etc/odoo/odoo.conf --db_host=postgres -w password -r odoo  -d osh -u sh_subscription && kill -HUP 1

@@ -15,7 +15,7 @@ class sh_sale_order_line(models.Model):
     multiplier_factor_number = fields.Integer("* Period", default=False)
     multiplier_factor_label = fields.Char("Period", default=False)
     periods_billed = fields.Char("Period(s) Billed", default=0)
-    so_server = fields.Many2one(comodel_name="so.server",  inverse_name="order_line",  string="S.O Server",  help="")
+    so_server = fields.Many2one('so.server', string="S.O Server", ondelete='restrict')
 
     def _last_period(self):
         for record in self:

@@ -11,6 +11,7 @@ import uuid
 import random
 import os
 import logging
+import sys
 _logger = logging.getLogger(__name__)
 
 class sh_backup (models.Model):

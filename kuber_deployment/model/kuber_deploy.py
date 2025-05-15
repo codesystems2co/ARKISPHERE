@@ -31,29 +31,29 @@ class kuber_deploy(models.Model):
                 so_server_id = params['_so_server']
         response = {'error':'True', 'deployments':[]}
         _active_deployments = []
-        uid = http.request.env.context.get('uid')
-        partner_id = self.env['res.users'].browse(uid).partner_id.id
-        _orders = self.env["sale.order"].search([('partner_id','=',partner_id)])
-        for _order in _orders:
-            _order_lines = request.env["sale.order.line"].sudo().search([
-                                                                            ('order_id','=',_order.id)  ,
-                                                                            ('is_kube_core_installed','=',True)              
-                                                                        ])
-            for _order_line in _order_lines:   
-                _order_line = request.env["sale.order.line"].sudo().browse(_order_line.id)
-                if _order_line.so_server:
-                    product = request.env["product.product"].sudo().browse(_order_line.product_id.id)
-                    product_template = request.env["product.template"].sudo().browse(product.product_tmpl_id.id)
-                    if(product_template.kuber_deployments):
-                        for kuber_deployment in product_template.kuber_deployments:
-                            _kuber_deployment = self.sudo().browse(kuber_deployment.id)
-                            already_deployed =_kuber_deployment.git_repositories.sudo().search([('so_server','=',int(_order_line.so_server.id))])
-                            if not already_deployed:
-                                if(so_server_id):
-                                    if(int(_order_line.so_server.id) == int(so_server_id)):
-                                        _active_deployments.append({"id":_kuber_deployment.id, "name":_kuber_deployment.name, "so_server":_order_line.so_server.name})
-                                else:
+        _order_lines = request.env["sale.order.line"].sudo().search([
+                                                                        ('so_server','=',int(so_server_id))  ,
+                                                                        #('is_kube_core_installed','=',True)              
+                                                                    ])
+        for _order_line in _order_lines:   
+            _order_line = request.env["sale.order.line"].sudo().browse(_order_line.id)
+            if _order_line.so_server:
+                product = request.env["product.product"].sudo().browse(_order_line.product_id.id)
+                product_template = request.env["product.template"].sudo().browse(product.product_tmpl_id.id)
+                if(product_template.kuber_deployments):
+                    for kuber_deployment in product_template.kuber_deployments:
+                        _kuber_deployment = self.sudo().browse(kuber_deployment.id)
+                        _logger.warning("_kuber_deployment >>")
+                        _logger.warning(_kuber_deployment)
+                        already_deployed =_kuber_deployment.git_repositories.sudo().search([('so_server','=',int(_order_line.so_server.id))])
+                        _logger.warning("_kuber_deployment already_deployed>>")
+                        _logger.warning(already_deployed)
+                        if not already_deployed:
+                            if(so_server_id):
+                                if(int(_order_line.so_server.id) == int(so_server_id)):
                                     _active_deployments.append({"id":_kuber_deployment.id, "name":_kuber_deployment.name, "so_server":_order_line.so_server.name})
+                            else:
+                                _active_deployments.append({"id":_kuber_deployment.id, "name":_kuber_deployment.name, "so_server":_order_line.so_server.name})
                             
 
         if(len(_active_deployments)>0):

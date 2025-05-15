@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="email_template_sale_order_server_details" model="mail.template">
+            <field name="name">Sales Order: Server Details</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="subject">🖥️ Server Details for Order {{ object.name }}</field>
+            <field name="email_from">{{ user.email_formatted }}</field>
+            <field name="partner_to">{{ object.partner_id.id }}</field>
+            <field name="description">Send server details to customer after sale order confirmation</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Dear {{ object.partner_id.name }},
+                    </p>
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Thank you for your order <strong>{{ object.name }}</strong>. Here are your server details:
+                    </p>
+                    <br/>
+                    {% for line in object.order_line %}
+                        {% if line.so_server and line.so_server.physical_server %}
+                            <div style="margin-left: 15px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 10px; background-color: #f9f9f9;">
+                                <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                                    <strong style="color: #875A7B;">🏷️ Server Name:</strong> {{ line.so_server.physical_server.name }}<br/>
+                                    <strong style="color: #875A7B;">🌐 IP Address:</strong> {{ line.so_server.physical_server.ip }}<br/>
+                                    <strong style="color: #875A7B;">🔑 Username:</strong> {{ line.so_server.physical_server.user }}<br/>
+                                    <strong style="color: #875A7B;">🔒 Password:</strong> {{ line.so_server.physical_server.password }}<br/>
+                                    <strong style="color: #875A7B;">🚪 Port:</strong> {{ line.so_server.physical_server.port }}<br/>
+                                    <br/>
+                                    <strong style="color: #875A7B;">💻 Specifications:</strong><br/>
+                                    <ul style="margin: 5px 0 0 20px; padding: 0;">
+                                        <li>CPU Cores: {{ line.so_server.physical_server.processor_core }}</li>
+                                        <li>RAM: {{ line.so_server.physical_server.ram_size }}</li>
+                                        <li>Disk: {{ line.so_server.physical_server.disk_size }}</li>
+                                    </ul>
+                                </p>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    <br/>
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        If you have any questions, please don't hesitate to contact us.
+                    </p>
+                    <br/>
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Best regards,<br/>
+                        {{ user.name }}
+                    </p>
+                    <div style="margin-top: 20px; padding: 10px; border-top: 1px solid #ccc;">
+                        <p style="font-size: 12px; color: #666;">
+                            <strong>Security Notice:</strong> Please store these credentials securely and change the password upon first login.
+                        </p>
+                    </div>
+                </div>
+            </field>
+            <field name="lang">{{ object.partner_id.lang }}</field>
+            <field name="auto_delete" eval="True"/>
+            <field name="meta_is_whatsapp">False</field>
+        </record>
+    </data>
+</odoo> 

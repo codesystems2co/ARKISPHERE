@@ -4,14 +4,16 @@ from odoo import models, fields, api, _
 from hcloud import Client
 from hcloud.images import Image
 from hcloud.server_types import ServerType
+from hcloud.locations import Location
 import time
 import logging
 _logger = logging.getLogger(__name__)
+
 class hetzner_server(models.Model):
     _inherit = "sh.physical_server"
 
     def create_hetzner_server(self, name, params, provider=None):
-
+        location = None
         if not provider:
             provider = self.env["sh.cloud.provider"].sudo().search_read([('_default','=',True)],['id'],limit=1)
             if provider:
@@ -27,22 +29,34 @@ class hetzner_server(models.Model):
         _logger.warning(int(params['disk_size']))
 
         if int(params['processor_core']) == 2 and int(params['ram_size']) == 4 and int(params['disk_size']) == 40:
-            _type = 'cax11'
-        
+            _type = 'cpx11'
+            location = 'fsn1'
+
+        # 4 cores, 8GB RAM, 80GB SSD Creates as well for second variant product.template ARCH X86 Intel
         if int(params['processor_core']) == 4 and int(params['ram_size']) == 8 and int(params['disk_size']) == 80:
-            _type = 'cax21'
+            _type = 'cx32'
+            location = 'fsn1'
+        
+        if int(params['processor_core']) == 4 and int(params['ram_size']) == 8 and int(params['disk_size']) == 160:
+            _type = 'cpx31'
+            location = 'fsn1'
+        
+        if int(params['processor_core']) == 4 and int(params['ram_size']) == 16 and int(params['disk_size']) == 160:
+            _type = 'ccx23'
+            location = 'fsn1'
 
         if int(params['processor_core']) == 8 and int(params['ram_size']) == 16 and int(params['disk_size']) == 160:
-            _type = 'cax31'
-        
+            _type = 'cx42'
+            location = 'fsn1'
+
         if int(params['processor_core']) == 16 and int(params['ram_size']) == 32 and int(params['disk_size']) == 320:
-            _type = 'cax41'
+            _type = 'cx52'
 
         _logger.warning("hetzner _type >>>")
         _logger.warning(_type)
 
         if _type:
-            hetzner_server = self.create_server(name, _type, provider)
+            hetzner_server = self.create_server(name, _type, provider, location)
             response['ip'] = self.get_server_ipv4(hetzner_server['id'],provider)            
             time.sleep(40)
             response['password'] = self.reset_password(hetzner_server['id'],provider)
@@ -54,12 +68,20 @@ class hetzner_server(models.Model):
         client = Client(token=provider.token)
         return client
 
-    def create_server(self, name, type, provider):
+    def create_server(self, name, type, provider, location):
         client = self.get_client(provider)
-        response = client.servers.create(
+        if location:
+            response = client.servers.create(
                                             name=name,
                                             server_type = ServerType(name=type),
-                                            image=Image(name="ubuntu-22.04"),
+                                            image=Image(name="ubuntu-24.04"),
+                                            location=Location(name=location)
+                                        )
+        else:
+            response = client.servers.create(
+                                            name=name,
+                                            server_type = ServerType(name=type),
+                                            image=Image(name="ubuntu-24.04")
                                         )
         server = response.server
         _logger.warning('server details >>')

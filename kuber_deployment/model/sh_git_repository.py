@@ -57,17 +57,17 @@ class sh_git_repository(models.Model):
         _logger.info(':: Cheking Core Software')
 
         command = str("microk8s version")
+        
         stdin, stdout, stderr = ssh.exec_command(command)
-        for line in iter(stdout.readline, ""):
-            _logger.warning(line)
-            if "MicroK8s v1.25.16 revision 6571" in line:
-               pass
-            else:
-               return {'error':True, 'message':_('Kindly, We are installing core software in your server. try over 5-10 minutes')} 
-            
+
+        for line in iter(stderr.readline, ""):
+            return {'error':True, 'message':_('Kindly, We are installing core software in your server. try over 5-10 minutes')} 
+        
         try:
             git_response =  super(sh_git_repository, self).create_git_repository(params)
-            _kuber_deployment = self.env['kuber.deploy'].sudo().browse(params['_kuber_deployment'])            
+            _logger.warning("_kuber_deployment >>>>")
+            _logger.warning(params['_kuber_deployment'])
+            _kuber_deployment = self.env['kuber.deploy'].sudo().browse(int(params['_kuber_deployment']))            
             _kuber_templates = self.env['kuber.template'].sudo().search([('kuber_deploy','=',int(params['_kuber_deployment']))], order='priority asc')
             _autor = self.env['git.autor'].sudo().browse(self.env.user.partner_id.id)
            
@@ -79,7 +79,7 @@ class sh_git_repository(models.Model):
                     _repository.sudo().update({'so_server':int(so_server.id)})
 
                 _logger.warning("_kuber_deployment >>")
-                _logger.warning(_kuber_deployment.id)
+                _logger.warning(_kuber_deployment)
 
                 self.env['sh.git_repository'].browse(_repository.id).sudo().update({'kuber_deploy':int(_kuber_deployment.id)})                
                 # create deployment directory
