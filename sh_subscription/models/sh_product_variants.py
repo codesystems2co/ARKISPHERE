@@ -11,7 +11,7 @@ class sh_product_template_attribute_value(models.Model):
     sh_is_subscription = fields.Boolean("Is Subscription?", default=False)
     sh_multiplier_factor = fields.Integer("Multiplier Factor", default=1)
     sh_capacity_gb = fields.Float("Capacity (GB)", default=0)
-    sh_code_identifier = fields.Selection([('PERIOD','Period'),('DISK','SSD'),('RAM','Memory Ram'),('PROCESSOR','Processor'),('WORKERS','Workers'),('CUSTOMISATION','Customisation')], string="Key")
+    sh_code_identifier = fields.Selection([('TYPE','type'),('PERIOD','Period'),('DISK','SSD'),('RAM','Memory Ram'),('PROCESSOR','Processor'),('WORKERS','Workers'),('CUSTOMISATION','Customisation')], string="Key")
 
     def create(self, default=None):      
         rec = super(sh_product_template_attribute_value, self).create(default)

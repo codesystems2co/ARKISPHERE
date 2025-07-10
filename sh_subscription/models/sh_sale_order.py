@@ -64,7 +64,7 @@ class sh_sale_order(models.Model):
                 _logger.info(values)
 
                 # Attributes change in order how display in view
-                values = {'workers':values[0],'period':values[1],'cores':values[2],'ram':values[3],'disk':values[4],'customisation':values[5]}
+                values = {'type':values[0],'period':values[1],'cores':values[2],'ram':values[3],'disk':values[4],'customisation':values[5]}
 
                 _logger.info('_cart_update line id values >>')
                 _logger.info(_order_line)

@@ -40,21 +40,22 @@ class sh_sale_order(models.Model):
                         values.append(str(value).replace('GB','').replace('Gi','').replace('Cores','').strip())
 
                     # Attributes change in order how display in view
-                    values = {'workers':values[0],'period':values[1],'cores':values[2],'ram':values[3],'disk':values[4],'customisation':values[5]}
+                    values = {'type':values[0],'period':values[1],'cores':values[2],'ram':values[3],'disk':values[4],'customisation':values[5]}
                 except:
                     pass
                 
                 if values:
 
                     _params = {
-                                    'ram_size':float(values['ram']),
-                                    'ram_size_gb':str(values['ram'])+str('GB'),
+                                    'type': str(values['type']),
+                                    'ram_size': float(values['ram']),
+                                    'ram_size_gb': str(values['ram'])+str('GB'),
 
-                                    'disk_size':float(values['disk']),                               
-                                    'disk_size_gb':str(values['disk'])+str('GB'),
+                                    'disk_size': float(values['disk']),                               
+                                    'disk_size_gb': str(values['disk'])+str('GB'),
 
-                                    'processor_core':str(values['cores']),                                                                        
-                                    'processor_core_gb':str(values['cores'])+str('GB'),
+                                    'processor_core': str(values['cores']),                                                                        
+                                    'processor_core_gb': str(values['cores'])+str('GB'),
 
                                     'order_line':_order_line,
                                     'order_name': self.name,
@@ -84,10 +85,10 @@ class sh_sale_order(models.Model):
                     _logger.warning(_order_line)
                     
                     hetzner_server = self.env['sh.physical_server'].create_hetzner_server(name, _params, provider)
-                    #hetzner_server = {'ip':'654645','password':'5555'}
 
                     if 'error' in hetzner_server:
-                        raise ValidationError(_(hetzner_server['error']))
+                        error_msg = hetzner_server.get('message', 'Unknown server creation error')
+                        raise ValidationError(_(error_msg))
                     
                     _logger.warning('hetzner server>>')
                     _logger.warning(hetzner_server)

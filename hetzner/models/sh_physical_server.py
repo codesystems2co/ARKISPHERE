@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api, _
+from odoo.exceptions import UserError
 from hcloud import Client
 from hcloud.images import Image
 from hcloud.server_types import ServerType
 from hcloud.locations import Location
+from hcloud.servers.client import BoundServer
+from hcloud._exceptions import APIException
 import time
 import logging
 _logger = logging.getLogger(__name__)
@@ -13,97 +16,155 @@ class hetzner_server(models.Model):
     _inherit = "sh.physical_server"
 
     def create_hetzner_server(self, name, params, provider=None):
-        location = None
-        if not provider:
-            provider = self.env["sh.cloud.provider"].sudo().search_read([('_default','=',True)],['id'],limit=1)
-            if provider:
-                provider = self.env["sh.cloud.provider"].sudo().browse(int(provider[0]['id']))
+        try:
+            location = None
             if not provider:
-                return {'error':True, 'message':_('A default cloud provider must be selected.')}
+                provider = self.env["sh.cloud.provider"].sudo().search_read([('_default','=',True)],['id'],limit=1)
+                if provider:
+                    provider = self.env["sh.cloud.provider"].sudo().browse(int(provider[0]['id']))
+                if not provider:
+                    return {'error':True, 'message':_('A default cloud provider must be selected.')}
 
-        response = {'ip':None, 'password':None}
-        _type = None
-        _logger.warning('hetzner specification >>>')
-        _logger.warning(int(params['processor_core']))
-        _logger.warning(int(params['ram_size']))
-        _logger.warning(int(params['disk_size']))
+            response = {'ip':None, 'password':None}
+            _type = None
+            _logger.info('Creating Hetzner server with specifications:')
+            _logger.info(f"Type: {params.get('type', 'N/A')}")
+            _logger.info(f"Cores: {params.get('processor_core', 'N/A')}")
+            _logger.info(f"RAM: {params.get('ram_size', 'N/A')} GB")
+            _logger.info(f"Disk: {params.get('disk_size', 'N/A')} GB")
 
-        if int(params['processor_core']) == 2 and int(params['ram_size']) == 4 and int(params['disk_size']) == 40:
-            _type = 'cpx11'
+            _type = params.get('type')
+            if _type:
+                _type = _type.lower()  # Ensure server type is lowercase for Hetzner API
             location = 'fsn1'
 
-        # 4 cores, 8GB RAM, 80GB SSD Creates as well for second variant product.template ARCH X86 Intel
-        if int(params['processor_core']) == 4 and int(params['ram_size']) == 8 and int(params['disk_size']) == 80:
-            _type = 'cx32'
-            location = 'fsn1'
-        
-        if int(params['processor_core']) == 4 and int(params['ram_size']) == 8 and int(params['disk_size']) == 160:
-            _type = 'cpx31'
-            location = 'fsn1'
-        
-        if int(params['processor_core']) == 4 and int(params['ram_size']) == 16 and int(params['disk_size']) == 160:
-            _type = 'ccx23'
-            location = 'fsn1'
-
-        if int(params['processor_core']) == 8 and int(params['ram_size']) == 16 and int(params['disk_size']) == 160:
-            _type = 'cx42'
-            location = 'fsn1'
-
-        if int(params['processor_core']) == 16 and int(params['ram_size']) == 32 and int(params['disk_size']) == 320:
-            _type = 'cx52'
-
-        _logger.warning("hetzner _type >>>")
-        _logger.warning(_type)
-
-        if _type:
-            hetzner_server = self.create_server(name, _type, provider, location)
-            response['ip'] = self.get_server_ipv4(hetzner_server['id'],provider)            
-            time.sleep(40)
-            response['password'] = self.reset_password(hetzner_server['id'],provider)
-        else:
-            return {'error':_('Hetzner Provider has not any server types with following specifications:\n Cores: '+str(params['processor_core'])+str('\n RAM: ')+str(params['ram_size']))+str('\n SSD: ')+str(params['disk_size'])}
-        return response
+            if _type:
+                hetzner_server = self.create_server(name, _type, provider, location)
+                if 'error' in hetzner_server:
+                    return hetzner_server
+                    
+                response['ip'] = self.get_server_ipv4(hetzner_server['id'], provider)            
+                time.sleep(40)
+                response['password'] = self.reset_password(hetzner_server['id'], provider)
+            else:
+                return {'error': True, 'message': _('Server type not specified in parameters.')}
+                
+            return response
+            
+        except Exception as e:
+            _logger.error(f"Unexpected error in create_hetzner_server: {str(e)}")
+            return {'error': True, 'message': _('An unexpected error occurred while creating the server. Please contact support.')}
     
-    def get_client(self,provider):
-        client = Client(token=provider.token)
-        return client
+    def get_client(self, provider):
+        try:
+            if not provider or not provider.token:
+                raise UserError(_('No valid cloud provider or API token configured.'))
+                
+            client = Client(token=provider.token)
+            return client
+            
+        except Exception as e:
+            _logger.error(f"Failed to create Hetzner client: {str(e)}")
+            raise UserError(_('Failed to connect to Hetzner Cloud. Please check your API credentials.'))
 
     def create_server(self, name, type, provider, location):
-        client = self.get_client(provider)
-        if location:
-            response = client.servers.create(
-                                            name=name,
-                                            server_type = ServerType(name=type),
-                                            image=Image(name="ubuntu-24.04"),
-                                            location=Location(name=location)
-                                        )
-        else:
-            response = client.servers.create(
-                                            name=name,
-                                            server_type = ServerType(name=type),
-                                            image=Image(name="ubuntu-24.04")
-                                        )
-        server = response.server
-        _logger.warning('server details >>')
-        _logger.warning(f"{server.id=} {server.name=} {server.status=}")
-        _logger.warning(f"root password: {response.root_password}")
-        
-        return {'id':server.id,'password':response.root_password}
+        try:
+            client = self.get_client(provider)
+            
+            # Ensure server type is lowercase for Hetzner API
+            type = type.lower() if type else type
+            
+            _logger.info(f"Creating server '{name}' with type '{type}' in location '{location}'")
+            
+            if location:
+                response = client.servers.create(
+                    name=name,
+                    server_type=ServerType(name=type),
+                    image=Image(name="ubuntu-24.04"),
+                    location=Location(name=location)
+                )
+            else:
+                response = client.servers.create(
+                    name=name,
+                    server_type=ServerType(name=type),
+                    image=Image(name="ubuntu-24.04")
+                )
+                
+            server = response.server
+            _logger.info(f"Server created successfully: {server.id} - {server.name} - {server.status}")
+            
+            return {'id': server.id, 'password': response.root_password}
+            
+        except APIException as e:
+            _logger.error(f"Hetzner API error while creating server: {str(e)}")
+            
+            # Handle specific Hetzner API errors with user-friendly messages
+            error_message = str(e).lower()
+            
+            if 'resource_unavailable' in error_message:
+                return {'error': True, 'message': _(
+                    f'The requested server type "{type}" is temporarily unavailable in location "{location}". '
+                    'Please try again later or contact support for alternative options.'
+                )}
+            elif 'server_type not found' in error_message or 'not_found' in error_message:
+                return {'error': True, 'message': _(
+                    f'The server type "{type}" does not exist. Please check the server configuration.'
+                )}
+            elif 'limit_exceeded' in error_message or 'quota' in error_message:
+                return {'error': True, 'message': _(
+                    'Account limit exceeded. You have reached the maximum number of servers allowed. '
+                    'Please contact support to increase your quota.'
+                )}
+            elif 'payment' in error_message or 'billing' in error_message:
+                return {'error': True, 'message': _(
+                    'Payment issue detected. Please check your billing information and try again.'
+                )}
+            elif 'unauthorized' in error_message or 'forbidden' in error_message:
+                return {'error': True, 'message': _(
+                    'Authentication failed. Please check your Hetzner API credentials.'
+                )}
+            else:
+                return {'error': True, 'message': _(
+                    f'Server creation failed: {str(e)}. Please contact support if this problem persists.'
+                )}
+                
+        except Exception as e:
+            _logger.error(f"Unexpected error in create_server: {str(e)}")
+            return {'error': True, 'message': _(
+                'An unexpected error occurred while creating the server. Please contact support.'
+            )}
     
     def reset_password(self, server_id, provider):
-        client = self.get_client(provider)
-        server = client.servers.get_by_id(int(server_id))
-        reset_password = client.servers.reset_password(server)
-        _logger.warning('reseted password for server id >>')
-        _logger.warning(server_id)
-        _logger.warning(f"{server.id=} {server.name=} {server.status=}")
-        _logger.warning(f"root password: {reset_password.root_password}")
-        return reset_password.root_password
+        try:
+            client = self.get_client(provider)
+            server = client.servers.get_by_id(int(server_id))
+            reset_password = client.servers.reset_password(server)
+            _logger.info(f"Password reset successfully for server {server_id}")
+            return reset_password.root_password
+            
+        except APIException as e:
+            _logger.error(f"Hetzner API error while resetting password: {str(e)}")
+            raise UserError(_('Failed to reset server password. Please try again or contact support.'))
+            
+        except Exception as e:
+            _logger.error(f"Unexpected error in reset_password: {str(e)}")
+            raise UserError(_('An unexpected error occurred while resetting the password.'))
     
     def get_server_ipv4(self, server_id, provider):
-        client = self.get_client(provider)
-        server = client.servers.get_by_id(int(server_id))
-        return server.public_net.primary_ipv4.ip
+        try:
+            client = self.get_client(provider)
+            server = client.servers.get_by_id(int(server_id))
+            ip = server.public_net.primary_ipv4.ip
+            _logger.info(f"Retrieved IP {ip} for server {server_id}")
+            return ip
+            
+        except APIException as e:
+            _logger.error(f"Hetzner API error while getting server IP: {str(e)}")
+            raise UserError(_('Failed to retrieve server IP address. Please try again or contact support.'))
+            
+        except Exception as e:
+            _logger.error(f"Unexpected error in get_server_ipv4: {str(e)}")
+            raise UserError(_('An unexpected error occurred while retrieving the server IP.'))
     
 
     # >>>>>> not used
