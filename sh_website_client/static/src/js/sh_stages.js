@@ -715,6 +715,7 @@ publicWidget.registry.sh_git_stages = publicWidget.Widget.extend({
     },
     create_ssl: function (btn, type) {
 
+        var self = this;
         var repository_id = btn.attr("repository_id");
         var branch_id = btn.attr("branch_id");
         var autor_id = btn.attr("autor_id");
@@ -743,7 +744,6 @@ publicWidget.registry.sh_git_stages = publicWidget.Widget.extend({
                     ssl_cert = reader.result;
                     // certificate key
                     var reader1 = new FileReader();
-                    reader1.readAsDataURL(ssl_cert_key_input);
                     try {
                         reader1.readAsDataURL(ssl_cert_key_input);
                     }
@@ -754,7 +754,7 @@ publicWidget.registry.sh_git_stages = publicWidget.Widget.extend({
                     }
                     reader1.onload = function () {
                         ssl_cert_key = reader1.result;
-                        this.create_ssl_rpc({ '_repository_id': repository_id, '_branch_id': branch_id, '_autor_id': autor_id, '_domain': _domain, 'ssl_cert': ssl_cert, 'ssl_cert_key': ssl_cert_key, "type": type }, _method);
+                        self.create_ssl_rpc({ '_repository_id': repository_id, '_branch_id': branch_id, '_autor_id': autor_id, '_domain': _domain, 'ssl_cert': ssl_cert, 'ssl_cert_key': ssl_cert_key, "type": type }, _method);
                     };
                     reader1.onerror = function (error) {
                         dialog.add(_t("Browse and upload a valid certificate key"), { 'title': _t('SSL'), sticky: false });
@@ -786,6 +786,11 @@ publicWidget.registry.sh_git_stages = publicWidget.Widget.extend({
                     if (response.error == true) {
                         dialog.add(response.message, { 'title': _t('SELF SIGNED SSL'), sticky: false });
                         $("html, body").animate({ scrollTop: 0 }, "fast");
+                        if (response.ssl_domains) {
+                           self.draw_domains_ssl(response.ssl_domains);
+                        }
+                        $('#ssl_cert').val('');
+                        $('#ssl_cert_key').val('');
                     }
                     else {
                         dialog.add(response.message, { 'title': _t('SELF SIGNED SSL'), sticky: false });

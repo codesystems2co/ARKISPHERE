@@ -7,11 +7,13 @@
          <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
             <xpath expr="//list/field[@name='name']" position="after">
-                <field name="is_subscription"/>
+                <field name="is_subscription" widget="boolean_toggle"/>
+                <field name="periods_billed" optional="hide"/>
                 <field name="last_period"/>
                 <field name="next_period"/>
                 <field name="multiplier_factor_label"/>
                 <field name="so_server"/>
+                
             </xpath>  
             <!--
             <xpath expr="//kanban/field[@name='name']" position="after">

@@ -84,15 +84,9 @@ class kuber_domains_ssl(models.Model):
         if(physical_server):
             ssh = self.get_ssh(physical_server)            
             self.env['kuber.deploy'].create_user_deploy_dir(ssh, _repository)
-            client_deployment_path = str(str("/home/kubernets/users/") + str(_repository.autor.id) + str("/") + str(_repository.id) + str("/ssl"))
-            if (not os.path.isdir(client_deployment_path)):
-                _logger.warning(client_deployment_path)
-                os.mkdir(str(client_deployment_path))
-                command = str("mkdir ") + client_deployment_path
-                stdin, stdout, stderr = ssh.exec_command(command)
-                _logger.warning(stdout)
-                command = str("chmod -R 777 ") + str(client_deployment_path)    
-                stdin, stdout, stderr = ssh.exec_command(command)
+            client_deployment_path = str(str("/home/kubernets/users/") + str(_repository.autor.id) + str("/") + str(_repository.id) + str("/ssl/"))
+            command = str("mkdir -p ") + client_deployment_path
+            stdin, stdout, stderr = ssh.exec_command(command)
             
             kuber_template = self.env['kuber.template'].search([('name','=','nginx.internal.domain.ssl.resolver')], limit=1)
             if(not kuber_template):
@@ -103,33 +97,47 @@ class kuber_domains_ssl(models.Model):
             self.env['kuber.deploy'].create_user_deploy_dir(ssh, _repository)
             ssl_type = str("external")
             if(params['type']=="external"):
-                self.upload_external_certificates(str(params['ssl_cert']), str(client_deployment_path) + str("/") + str(_domain.name) + str(".crt")) 
-                self.upload_external_certificates(str(params['ssl_cert_key']), str(client_deployment_path) + str("/") + str(_domain.name) + str(".key"))       
+                try:
+                    _, cert_encoded = str(params['ssl_cert']).split(",", 1)
+                    cert_encoded += '=' * (-len(cert_encoded) % 4)
+                    cert_decoded = base64.b64decode(cert_encoded)
+                    
+                    _, key_encoded = str(params['ssl_cert_key']).split(",", 1)
+                    key_encoded += '=' * (-len(key_encoded) % 4)
+                    key_decoded = base64.b64decode(key_encoded)
+                except Exception as e:
+                    _logger.error("Could not decode base64 certificate data: %s", e)
+                    raise Warning("The uploaded certificate or key file is not in a valid format.")
+
+                self.upload_external_certificates(ssh, cert_decoded, str(client_deployment_path) + str(_domain.name) + str(".crt")) 
+                self.upload_external_certificates(ssh, key_decoded, str(client_deployment_path) + str(_domain.name) + str(".key"))      
+                
                 _domain_ssl = self.sudo().search([("name","=",int(_domain.id))], limit=1)
-                
-                ssl_cert = str(params['ssl_cert']).replace("data:application/x-x509-ca-cert;base64,","")
-                ssl_cert_key = str(params['ssl_cert_key']).replace("data:application/octet-stream;base64,","")
-                
+
                 if(not _domain_ssl):
                     new_ssl = self.sudo().create({
                                                     "name": int(_domain.id),
-                                                    "ssl_cert":base64.encodestring(str(ssl_cert), 'utf-8'),
-                                                    "ssl_cert_key":base64.encodestring(str(ssl_cert_key), 'utf-8'),
+                                                    "ssl_cert": cert_decoded,
+                                                    "ssl_cert_key": key_decoded,
                                                     "ssl_type":ssl_type,
                                                     "filename_crt":str(_domain.name) + str(".crt"),
                                                     "filename_key":str(_domain.name) + str(".key")
                                                 })
                 else:
                     _domain_ssl.sudo().update({
-                                                "ssl_cert":bytes(str(ssl_cert), 'utf-8'),
-                                                "ssl_cert_key":bytes(str(ssl_cert_key), 'utf-8'),
+                                                "ssl_cert": cert_decoded,
+                                                "ssl_cert_key": key_decoded,
                                                 "ssl_type":ssl_type,
                                                 "filename_crt":str(_domain.name) + str(".crt"),
                                                 "filename_key":str(_domain.name) + str(".key")
                                               })
             else:
                 pass
-            template_tagged = self.tags_replace_matches_tpl(kuber_template.content, {"crt_file":str(client_deployment_path) + str(_domain.name) + str(".crt"), "key_file":str(client_deployment_path) + str(_domain.name) + str(".key"), "domain":_domain.name})
+            
+            template_content = kuber_template.content.replace("listen      443 default;", "listen 443 ssl default;")
+            template_content = template_content.replace("ssl on;", "")
+
+            template_tagged = self.tags_replace_matches_tpl(template_content, {"crt_file":str(client_deployment_path) + str(_domain.name) + str(".crt"), "key_file":str(client_deployment_path) + str(_domain.name) + str(".key"), "domain":_domain.name})
             _file = self.create_domain_ssl_file(ssh, _repository, str(_domain.name), str(template_tagged), physical_server)   
             self.upstream_ssl_service(_file, ssh)
             response['ssl_domains'] = self.get_domains_ssl(params)
@@ -193,6 +201,14 @@ class kuber_domains_ssl(models.Model):
         for line in iter(stderr.readline, ""):
             _logger.warning(line)
 
+        command = str("service nginx reload")
+        _logger.warning(command)
+        stdin, stdout, stderr = ssh.exec_command(command)
+        for line in iter(stdout.readline, ""):
+            _logger.warning(line)
+        for line in iter(stderr.readline, ""):
+            _logger.warning(line)
+
     def create_self_signed(self, _file_path, domain, ssh, callback_cert_path=""):
         crt_file = str(_file_path) + str("/") + str(domain.name) + str(".crt")
         key_file = str(_file_path) + str("/") + str(domain.name) + str(".key")
@@ -223,11 +239,16 @@ class kuber_domains_ssl(models.Model):
 
         return {"crt_file":crt_file, "key_file":key_file}
 
-    def upload_external_certificates(self, file_string, _file_path):
-        _logger.warning(file_string)
-        ssl_cert = str(file_string).encode('utf-8')
-        with open(_file_path, 'wb') as file_to_save:
-            file_to_save.write( bytes(file_string, 'utf-8'))
+    def upload_external_certificates(self, ssh, file_bytes, _file_path):
+        _logger.warning("Writing certificate data to " + _file_path)
+        try:
+            sftp = ssh.open_sftp()
+            with sftp.file(_file_path, 'wb') as file_to_save:
+                file_to_save.write(file_bytes)
+            sftp.close()
+        except Exception as e:
+            _logger.error("Failed to write certificate to path %s: %s", _file_path, e)
+            raise Warning("Could not save uploaded file to path: " + _file_path)
         pass
     
     def tags_replace_matches_tpl(self, content, params):

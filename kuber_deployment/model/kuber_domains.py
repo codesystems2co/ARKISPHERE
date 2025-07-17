@@ -123,7 +123,6 @@ class kuber_domains(models.Model):
             # tags replacement on deployments templates
             content = self.tags_replace_matches_tpl(kuber_template.content, {'_ip':physical_server.ip, '_domain':domain_name, '_port':tarjet_port})
             _file = self.create_domain_file(ssh, _branch.repository, domain_name, content, physical_server)
-            raise UserError(_file)
 
             sites_enabled = str(" /etc/nginx/sites-enabled/") # + str(_branch.repository.autor.id)
             autor_repository_folder = str(" /etc/nginx/sites-enabled/") # + str(_branch.repository.autor.id)+str('/')+str(_branch.repository.id)

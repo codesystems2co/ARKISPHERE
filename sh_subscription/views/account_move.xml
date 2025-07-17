@@ -7,7 +7,7 @@
          <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='invoice_date']" position="after">
-                <field name="has_subscription"/>
+                <field name="has_subscription" widget="boolean_toggle"/>
             </xpath>         
         </field>
     </record>
@@ -18,7 +18,7 @@
          <field name="inherit_id" ref="account.view_invoice_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='name']" position="after">
-                <field name="has_subscription" />
+                <field name="has_subscription" widget="boolean_toggle"/>
             </xpath>         
         </field>
     </record>

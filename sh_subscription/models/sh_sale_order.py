@@ -45,7 +45,105 @@ class sh_sale_order(models.Model):
             pass
 
     has_subscription = fields.Boolean("Has Subscription", compute=_has_subscription)
-    
+
+    def account_move_subscriptions(self, sale_order):
+        """
+        Create all subscription invoices for a sale order based on billing periods
+        """
+        try:
+            _logger.info("Processing subscription invoices for sale order: %s", sale_order.name)
+            
+            # Get all subscription lines for this order
+            subscription_lines = sale_order.order_line.filtered(lambda line: line.is_subscription)
+            
+            if not subscription_lines:
+                _logger.info("No subscription lines found for order %s", sale_order.name)
+                return
+            
+            _logger.info("Found %s subscription lines", len(subscription_lines))
+            
+            # Calculate how many periods should have been billed
+            current_date = datetime.now()
+            order_date = sale_order.date_order
+            
+            if not order_date:
+                _logger.warning("No order date found for sale order %s", sale_order.name)
+                return
+            
+            _logger.info("Order date: %s, Current date: %s", order_date, current_date)
+            
+            # Process each subscription line to determine billing periods
+            for line in subscription_lines:
+                try:
+                    multiplier = int(line.multiplier_factor_number) if line.multiplier_factor_number else 1
+                    periods_billed = int(line.periods_billed) if line.periods_billed else 0
+                    
+                    _logger.info("Line %s: multiplier=%s, periods_billed=%s", line.id, multiplier, periods_billed)
+                    
+                    # Calculate how many periods should have been billed by now
+                    months_since_order = (current_date.year - order_date.year) * 12 + (current_date.month - order_date.month)
+                    periods_should_be_billed = (months_since_order // multiplier) + 1
+                    
+                    _logger.info("Months since order: %s, Periods should be billed: %s", months_since_order, periods_should_be_billed)
+                    
+                    # Create invoices for missing periods
+                    missing_periods = periods_should_be_billed - periods_billed
+                    
+                    if missing_periods > 0:
+                        _logger.info("Creating %s missing invoices for line %s", missing_periods, line.id)
+                        
+                        for period_num in range(1, missing_periods + 1):
+                            # Calculate invoice date for this period
+                            invoice_period = periods_billed + period_num
+                            invoice_date = order_date + relativedelta(months=(invoice_period - 1) * multiplier)
+                            
+                            # Don't create invoices for future dates
+                            if invoice_date > current_date:
+                                _logger.info("Skipping future invoice for period %s (date: %s)", invoice_period, invoice_date)
+                                break
+                            
+                            _logger.info("Creating invoice for period %s with date %s", invoice_period, invoice_date)
+                            
+                            # Prepare invoice values
+                            invoice_vals = sale_order._prepare_invoice()
+                            invoice_vals["invoice_date"] = invoice_date.date() if isinstance(invoice_date, datetime) else invoice_date
+                            
+                            # Add invoice lines - only subscription lines
+                            invoice_vals['invoice_line_ids'] = []  # Clear default lines
+                            
+                            for order_line in sale_order.order_line:
+                                if order_line.is_subscription:
+                                    line_vals = order_line._prepare_invoice_line()
+                                    line_vals["quantity"] = order_line.product_uom_qty
+                                    invoice_vals['invoice_line_ids'].append((0, 0, line_vals))
+                            
+                            # Create the invoice
+                            invoice = request.env["account.move"].create(invoice_vals)
+                            
+                            # Force update subscription flags after creation
+                            for inv_line in invoice.invoice_line_ids:
+                                inv_line._is_subscription()
+                            invoice._has_subscription()
+                            
+                            _logger.info("Created subscription invoice %s for period %s", invoice.name, invoice_period)
+                            
+                            # Update periods billed
+                            line.sudo().update({
+                                'periods_billed': str(periods_billed + period_num)
+                            })
+                            
+                    else:
+                        _logger.info("No missing periods for line %s", line.id)
+                        
+                except Exception as e:
+                    _logger.error("Error processing subscription line %s: %s", line.id, str(e))
+                    continue
+                    
+            _logger.info("Completed processing subscription invoices for sale order: %s", sale_order.name)
+            
+        except Exception as e:
+            _logger.error("Error in account_move_subscriptions for order %s: %s", sale_order.name if sale_order else 'Unknown', str(e))
+
 
     def _cart_update(self, product_id=None, line_id=None, add_qty=0, set_qty=0, **kwargs):
         response =  super(sh_sale_order, self)._cart_update(product_id, line_id, add_qty, set_qty, **kwargs)
@@ -116,31 +214,78 @@ class sh_sale_order(models.Model):
                                                                             ])
                 for_next_invoice = False
                 _now = datetime.now() # + relativedelta(months=+(int(30)))
-                for _order_line in _order_lines:                
-                    if(_now > _order_line.next_period):
-                        _line_update = request.env["sale.order.line"].sudo().browse(_order_line.id)
-                        _line_update.update({
-                                                'periods_billed':int(int(_order_line.periods_billed) + int(1))
-                                            })                    
-                        _logger.warning("INVOICE APPLIES")
-                        for_next_invoice = True                             
-                    else:
-                        _logger.warning("INVOICE DOES NOT APPLY")            
+                
+                for _order_line in _order_lines:
+                    # Only process subscription lines
+                    if not _order_line.is_subscription:
+                        continue
+                    
+                    # Calculate next period manually instead of relying on computed field
+                    try:
+                        multiplier = int(_order_line.multiplier_factor_number) if _order_line.multiplier_factor_number else 1
+                        periods_billed = int(_order_line.periods_billed) if _order_line.periods_billed else 0
+                        
+                        # Calculate when next invoice should be due
+                        if _order.date_order:
+                            should_invoice = False
+                            
+                            if periods_billed == 0:
+                                # First period - bill immediately if order is at least 1 day old
+                                days_since_order = (_now.date() - _order.date_order.date()).days
+                                if days_since_order >= 0:  # Order exists, bill first period
+                                    should_invoice = True
+                                    _logger.warning("Line %s: FIRST PERIOD - PeriodsBilled=%s, DaysSinceOrder=%s", 
+                                                   _order_line.id, periods_billed, days_since_order)
+                            else:
+                                # Subsequent periods - bill when due date arrives
+                                next_invoice_date = _order.date_order + relativedelta(months=periods_billed * multiplier)
+                                if _now.date() >= next_invoice_date.date():
+                                    should_invoice = True
+                                    _logger.warning("Line %s: RECURRING PERIOD - Current=%s, NextDue=%s, PeriodsBilled=%s", 
+                                                   _order_line.id, _now.date(), next_invoice_date.date(), periods_billed)
+                            
+                            if should_invoice:
+                                _logger.warning("INVOICE APPLIES for line %s", _order_line.id)
+                                
+                                # Update periods billed
+                                _line_update = request.env["sale.order.line"].sudo().browse(_order_line.id)
+                                _line_update.update({
+                                    'periods_billed': str(periods_billed + 1)
+                                })                    
+                                
+                                for_next_invoice = True                             
+                            else:
+                                _logger.warning("INVOICE DOES NOT APPLY for line %s", _order_line.id)
+                        else:
+                            _logger.warning("No order date for line %s", _order_line.id)
+                            
+                    except Exception as e:
+                        _logger.error("Error processing line %s: %s", _order_line.id, str(e))            
                 
                 if(for_next_invoice): 
                     invoice_vals = _order._prepare_invoice() 
                     _logger.warning("___INVOICE")
                     _logger.warning(date.today() )
                     invoice_vals["invoice_date"] = date.today()
-                    invoice_vals = _order._prepare_invoice()
-                    for line in _order.order_line:          
+                    
+                    # Clear default lines and only add subscription lines
+                    invoice_vals['invoice_line_ids'] = []
+                    
+                    for line in _order.order_line:
+                        if line.is_subscription:  # Only add subscription lines
                             _line_vals = line._prepare_invoice_line()                        
-                            _line_vals["display_type"] = False 
                             _line_vals["quantity"] = line.product_uom_qty
                             invoice_vals['invoice_line_ids'].append((0, 0, _line_vals))
                     
+                    # Create the invoice
+                    invoice = request.env["account.move"].create(invoice_vals)
                     
-                    request.env["account.move"].create(invoice_vals)
+                    # Force update subscription flags after creation
+                    for inv_line in invoice.invoice_line_ids:
+                        inv_line._is_subscription()
+                    invoice._has_subscription()
+                    
+                    _logger.warning("Created subscription invoice %s", invoice.name)
         except:
             pass
     

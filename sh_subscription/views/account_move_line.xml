@@ -7,7 +7,7 @@
          <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
             <xpath expr="//list/field[@name='name']" position="after">
-                <field name="is_subscription"/>
+                <field name="is_subscription" widget="boolean_toggle"/>
                 <field name="last_period"/>
                 <field name="next_period"/>
                 <field name="multiplier_factor_label"/>
