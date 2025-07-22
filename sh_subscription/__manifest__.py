@@ -12,11 +12,13 @@
     'version': '0.1',
     'depends': ['base', 'web', 'account', 'website_sale', 'product', 'sale' , 'so_server', 'mail'],
     'data': [
+                #'security/ir.model.access.csv',
                 'views/product_template_attribute_value.xml',
                 'views/sale_order.xml',
                 'views/sale_order_line.xml',
                 'views/account_move.xml',
                 'views/account_move_line.xml',
+                'views/sh_subscription_views.xml',
                 'static/src/qweb/variants.xml',
                 'views/ir_cron.xml',                
                 'data/mail_template.xml',
@@ -25,6 +27,9 @@
                 'web.assets_frontend': [
                                             'sh_subscription/static/src/css/frontend.css',
                                             'sh_subscription/static/src/js/website.js'
+                                        ],
+                'web.assets_backend': [
+                                            'sh_subscription/static/src/css/subscription.css',
                                         ],
                 },
 }

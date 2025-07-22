@@ -1,0 +1,73 @@
+/* Subscription Kanban Styles */
+
+.o_kanban_dashboard .oe_kanban_card {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.o_kanban_dashboard .oe_kanban_card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+.o_kanban_card_header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 8px 8px 0 0;
+    padding: 12px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.subscription-status-active {
+    background-color: #d4edda;
+    border-left: 4px solid #28a745;
+}
+
+.subscription-status-due-soon {
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+}
+
+.subscription-status-overdue {
+    background-color: #f8d7da;
+    border-left: 4px solid #dc3545;
+}
+
+.subscription-status-inactive {
+    background-color: #e2e3e5;
+    border-left: 4px solid #6c757d;
+}
+
+.subscription-period-info {
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    padding: 8px;
+    margin: 4px 0;
+}
+
+.subscription-amount {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #495057;
+}
+
+.subscription-customer {
+    font-size: 0.9em;
+    color: #6c757d;
+}
+
+.badge-active {
+    background-color: #28a745;
+}
+
+.badge-due-soon {
+    background-color: #ffc107;
+}
+
+.badge-overdue {
+    background-color: #dc3545;
+}
+
+.badge-inactive {
+    background-color: #6c757d;
+} 

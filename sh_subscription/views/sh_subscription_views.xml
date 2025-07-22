@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Subscription Orders Kanban View -->
+    <record id="sh_subscription_order_kanban_view" model="ir.ui.view">
+        <field name="name">Subscription Orders Kanban</field>
+        <field name="model">sale.order</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="partner_id" class="o_kanban_dashboard o_kanban_subscription">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="subscription_display_name"/>
+                <field name="subscription_last_period"/>
+                <field name="subscription_next_period"/>
+                <field name="subscription_status"/>
+                <field name="subscription_invoice_count"/>
+                <field name="amount_total"/>
+                <field name="currency_id"/>
+                <field name="state"/>
+                <field name="has_subscription"/>
+                
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click subscription-card" style="margin-bottom: 10px;">
+                            <div class="o_kanban_record_top">
+                                <div class="o_kanban_record_headings" style="margin-bottom: 10px;">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="subscription_display_name"/>
+                                    </strong>
+                                    <div class="o_kanban_record_subtitle text-muted" style="margin-bottom: 8px;">
+                                        <field name="name"/>
+                                    </div>
+                                    <div class="subscription-status-badge" style="margin-bottom: 8px;">
+                                        <span t-if="record.subscription_status.raw_value == 'active'" 
+                                              class="badge badge-success">
+                                            <i class="fa fa-check" title="Active" style="margin-right: 4px;"/> Active
+                                        </span>
+                                        <span t-if="record.subscription_status.raw_value == 'due_soon'" 
+                                              class="badge badge-warning">
+                                            <i class="fa fa-clock-o" title="Due Soon" style="margin-right: 4px;"/> Due Soon
+                                        </span>
+                                        <span t-if="record.subscription_status.raw_value == 'overdue'" 
+                                              class="badge badge-danger">
+                                            <i class="fa fa-exclamation-triangle" title="Overdue" style="margin-right: 4px;"/> Overdue
+                                        </span>
+                                        <span t-if="record.subscription_status.raw_value == 'inactive'" 
+                                              class="badge badge-secondary">
+                                            <i class="fa fa-pause" title="Inactive" style="margin-right: 4px;"/> Inactive
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_details">
+                                    <div class="row period-row" style="margin-bottom: 10px;">
+                                        <div class="col-6 period-left">
+                                            <div style="margin-bottom: 4px;">
+                                                <i class="fa fa-calendar text-muted" title="Last Period" style="margin-right: 6px;"></i>
+                                                <span class="text-muted">Last:</span>
+                                            </div>
+                                            <div style="margin-left: 20px;">
+                                                <span t-if="record.subscription_last_period.value">
+                                                    <t t-esc="record.subscription_last_period.value"/>
+                                                </span>
+                                                <span t-else="" class="text-muted">Not billed yet</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 period-right">
+                                            <div style="margin-bottom: 4px;">
+                                                <i class="fa fa-clock-o text-primary" title="Next Period" style="margin-right: 6px;"></i>
+                                                <span class="text-primary">Next:</span>
+                                            </div>
+                                            <div style="margin-left: 20px;">
+                                                <span t-if="record.subscription_next_period.value">
+                                                    <t t-esc="record.subscription_next_period.value"/>
+                                                </span>
+                                                <span t-else="" class="text-muted">No next period</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="o_kanban_record_bottom" style="margin-top: 10px; margin-bottom: 8px;">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <span class="amount-total">
+                                            <field name="amount_total" widget="monetary"/>
+                                        </span>
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <span class="text-muted">
+                                            <i class="fa fa-calendar" title="Order Date" style="margin-right: 4px;"></i>
+                                            <field name="date_order"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="oe_kanban_footer" style="margin-top: 10px;">
+                                <div class="text-center">
+                                    <button type="object" name="action_view_subscription_invoices" 
+                                            class="btn btn-sm btn-primary btn-block">
+                                        <i class="fa fa-file-text-o" title="View Invoices" style="margin-right: 4px;"/> 
+                                        Invoices (<t t-esc="record.subscription_invoice_count.value"/>)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Subscription Orders List View -->
+    <record id="sh_subscription_order_list_view" model="ir.ui.view">
+        <field name="name">Subscription Orders List</field>
+        <field name="model">sale.order</field>
+        <field name="arch" type="xml">
+            <list decoration-success="subscription_status == 'active'" 
+                  decoration-warning="subscription_status == 'due_soon'" 
+                  decoration-danger="subscription_status == 'overdue'"
+                  decoration-muted="subscription_status == 'inactive'">
+                
+                <field name="subscription_status" widget="badge" 
+                       decoration-success="subscription_status == 'active'"
+                       decoration-warning="subscription_status == 'due_soon'"
+                       decoration-danger="subscription_status == 'overdue'"
+                       decoration-muted="subscription_status == 'inactive'"/>
+                <field name="name" string="Order"/>
+                <field name="subscription_display_name" string="Subscription Name"/>
+                <field name="partner_id" string="Customer"/>
+                <field name="subscription_last_period" string="Last Period"/>
+                <field name="subscription_next_period" string="Next Period"/>
+                <field name="amount_total" string="Total" widget="monetary"/>
+                <field name="currency_id" groups="base.group_multi_currency"/>
+                <field name="state" string="Status" widget="badge"/>
+                <field name="date_order" string="Order Date"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Subscription Orders Form View -->
+    <record id="sh_subscription_order_form_view" model="ir.ui.view">
+        <field name="name">Subscription Orders Form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_process_subscription_billing" 
+                        string="Process Billing" 
+                        type="object" 
+                        class="btn-primary"
+                        invisible="has_subscription == False"/>
+            </xpath>
+            
+            <xpath expr="//group[@name='sale_header']" position="after">
+                <group name="subscription_info" string="Subscription Information" 
+                       invisible="has_subscription == False">
+                    <field name="subscription_display_name"/>
+                    <field name="subscription_status" widget="badge"/>
+                    <field name="subscription_last_period"/>
+                    <field name="subscription_next_period"/>
+                </group>
+            </xpath>
+            
+            <xpath expr="//page[@name='other_information']" position="after">
+                <page string="Subscription Actions" invisible="has_subscription == False">
+                    <group>
+                        <button name="action_view_subscription_invoices" 
+                                string="View Subscription Invoices" 
+                                type="object" 
+                                class="oe_highlight"/>
+                        <button name="action_process_subscription_billing" 
+                                string="Process Subscription Billing" 
+                                type="object" 
+                                class="oe_highlight"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Subscription Orders Action -->
+    <record id="action_sh_subscription_orders" model="ir.actions.act_window">
+        <field name="name">Subscription Orders</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('has_subscription', '=', True)]</field>
+        <field name="context">{
+            'search_default_subscription_status': 1,
+            'default_has_subscription': True
+        }</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'kanban', 'view_id': ref('sh_subscription_order_kanban_view')}),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('sh_subscription_order_list_view')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('sh_subscription_order_form_view')})]"/>
+    </record>
+
+    <!-- Subscription Invoices Action -->
+    <record id="action_sh_subscription_invoices" model="ir.actions.act_window">
+        <field name="name">Subscription Invoices</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('has_subscription', '=', True), ('move_type', '=', 'out_invoice')]</field>
+        <field name="context">{
+            'default_move_type': 'out_invoice',
+            'default_has_subscription': True
+        }</field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem id="menu_sh_subscriptions" 
+              name="Subscriptions" 
+              sequence="45"
+              web_icon="fa-refresh"/>
+
+    <menuitem id="menu_sh_subscription_orders" 
+              name="Subscription Orders" 
+              parent="menu_sh_subscriptions" 
+              action="action_sh_subscription_orders" 
+              sequence="10"/>
+
+    <menuitem id="menu_sh_subscription_invoices" 
+              name="Subscription Invoices" 
+              parent="menu_sh_subscriptions" 
+              action="action_sh_subscription_invoices" 
+              sequence="20"/>
+
+</odoo> 

@@ -14,37 +14,18 @@ _logger = logging.getLogger(__name__)
 class sh_sale_order(models.Model):
     _inherit = "sale.order"
 
-    def _has_subscription(self):
-        try:                           
-            for record in self:
-                try:
-                    _order_lines = request.env["sale.order.line"].search([
-                                                                            ('order_id','=',record.id)            
-                                                                         ])
-                    for _order_line in _order_lines:
-                        if(_order_line.is_subscription):
-                            try:
-                                record.has_subscription = _order_line.is_subscription
-                                record.sudo.update({'has_subscription':record.has_subscription})
-                                return record.has_subscription
-                            except:
-                                record.has_subscription = False
-                                record.sudo.update({'has_subscription':record.has_subscription})
-                                return record.has_subscription
-                except:
-                    try:
-                        self.has_subscription = False
-                        self.sudo().update({'has_subscription':record.has_subscription})
-                        return self.has_subscription
-                    except:
-                        pass
-        except:
-            self.has_subscription = False
-            self.sudo().update({'has_subscription':record.has_subscription})
-            return self.has_subscription 
-            pass
+    @api.depends('order_line.is_subscription')
+    def _compute_has_subscription(self):
+        """Compute if order has subscription lines"""
+        for record in self:
+            try:
+                subscription_lines = record.order_line.filtered(lambda line: line.is_subscription)
+                record.has_subscription = bool(subscription_lines)
+            except Exception as e:
+                _logger.warning(f"Error computing has_subscription for order {record.id}: {e}")
+                record.has_subscription = False
 
-    has_subscription = fields.Boolean("Has Subscription", compute=_has_subscription)
+    has_subscription = fields.Boolean("Has Subscription", compute='_compute_has_subscription', store=True)
 
     def account_move_subscriptions(self, sale_order):
         """
