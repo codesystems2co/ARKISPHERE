@@ -33,6 +33,7 @@ Information
 				"view/sh_git_permission.xml",
 				"view/sh_git_branch.xml",
 				"view/sh_git_commit.xml",
+				"view/res_partner_github_org.xml",
 
 				"report/sh_git_autor.xml",
 				"report/sh_git_repository.xml",
@@ -40,6 +41,9 @@ Information
 				"report/sh_git_permission.xml",
 				"report/sh_git_branch.xml",
 				"report/sh_git_commit.xml",
+				
+				# Crons
+				"crons/github_organizations.xml",
 	        ],
 	#"external_dependencies":['PyGithub', 'xmlrpclib'],
     'assets': {

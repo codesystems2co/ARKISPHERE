@@ -152,29 +152,22 @@
                         type="object" 
                         class="btn-primary"
                         invisible="has_subscription == False"/>
-            </xpath>
-            
-            <xpath expr="//group[@name='sale_header']" position="after">
-                <group name="subscription_info" string="Subscription Information" 
-                       invisible="has_subscription == False">
-                    <field name="subscription_display_name"/>
-                    <field name="subscription_status" widget="badge"/>
-                    <field name="subscription_last_period"/>
-                    <field name="subscription_next_period"/>
-                </group>
-            </xpath>
+            </xpath>            
             
             <xpath expr="//page[@name='other_information']" position="after">
-                <page string="Subscription Actions" invisible="has_subscription == False">
+                <page string="Subscription Information" invisible="has_subscription == False">
                     <group>
-                        <button name="action_view_subscription_invoices" 
-                                string="View Subscription Invoices" 
+
+                        <field name="subscription_display_name"/>
+                        <field name="subscription_status" widget="badge"/>
+                        <field name="subscription_last_period"/>
+                        <field name="subscription_next_period"/>
+                        
+                                                    <button name="action_view_subscription_invoices" 
+                                icon="fa-file-text-o" 
                                 type="object" 
-                                class="oe_highlight"/>
-                        <button name="action_process_subscription_billing" 
-                                string="Process Subscription Billing" 
-                                type="object" 
-                                class="oe_highlight"/>
+                                class="oe_highlight" 
+                                title="View Subscription Invoices"/>
                     </group>
                 </page>
             </xpath>

@@ -91,7 +91,7 @@ class sh_git_repository(models.Model):
                         last_pod = self.env['kuber.deploy'].sudo().get(ssh, _repository, selectors={'app':_template.expose_selector}, _type=_template._type)
                         self.env['kuber.deploy'].sudo().delete(ssh, _repository, _template.expose_selector, _type='svc')                            
                         self.expose_cluster_custom(ssh, git_response['_branch'], _autor, _repository, last_pod['name'], _template._type, _template.app_port)                                            
-                self.expose_cluster(git_response['_branch'], _autor, _repository, params['_kuber_deployment'])                    
+                self.expose_cluster(git_response['_branch'], _autor, _repository, params['_kuber_deployment'])    
                 
                 # custom commands for a branch, then replicate                    
                 self.env['kuber.commands'].sudo().execute_command_on_deploy(_kuber_deployment, git_response['_branch'])

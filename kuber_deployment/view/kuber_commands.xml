@@ -12,6 +12,8 @@
                     <field name="name" />
                     <field name="branch" />
                     <field name="is_private" widget="boolean_toggle"/>
+                    <field name="product_attribute_id" optional="hide"/>
+                    <field name="product_attribute_value_ids" optional="hide" widget="many2many_tags"/>
                 </list>
             </field>
         </record>
@@ -41,6 +43,16 @@
                                 <field name="is_private"  widget="boolean_toggle"/>
                                 <field name="branch" />                               
                             </group>
+                            <group>
+                                <field name="product_attribute_id" 
+                                       invisible="not is_private" 
+                                       required="is_private"/>
+                                <field name="product_attribute_value_ids" 
+                                       widget="many2many_tags"
+                                       invisible="not is_private" 
+                                       required="is_private"
+                                       domain="[('attribute_id', '=', product_attribute_id)]"/>
+                            </group>
                         </group>
                          <notebook>
                             <page string="Deployments">
@@ -63,8 +75,11 @@
                     <field name="is_private" />
                     <field name="kuber_deployments"/>
                     <field name="branch" select="True"/>
+                    <field name="product_attribute_id"/>
+                    <field name="product_attribute_value_ids"/>
                     <group string="Group By..">
                         <filter string="Kuber branch" domain="[]" name="group_by_branch" context="{'group_by':'branch'}"/>
+                        <filter string="Product Attribute" domain="[]" name="group_by_attribute" context="{'group_by':'product_attribute_id'}"/>
                     </group>
                 </search>
             </field>
@@ -78,6 +93,9 @@
                     <field name="id" />
                     <field name="name" />
                     <field name="branch" />
+                    <field name="is_private" />
+                    <field name="product_attribute_id" />
+                    <field name="product_attribute_value_ids" />
                     
                     <templates>
                         <t t-name="kanban-box">
@@ -92,6 +110,12 @@
                                         </li>
                                         <li>
                                             private: <field name="is_private" widget="boolean_toggle"></field>
+                                        </li>
+                                        <li t-if="record.is_private.raw_value and record.product_attribute_id.raw_value">
+                                            <i class="fa fa-tag"></i> <field name="product_attribute_id"></field>
+                                        </li>
+                                        <li t-if="record.is_private.raw_value and record.product_attribute_value_ids.raw_value">
+                                            <i class="fa fa-tags"></i> <field name="product_attribute_value_ids" widget="many2many_tags"></field>
                                         </li>
                                     </ul>
                                 </div>

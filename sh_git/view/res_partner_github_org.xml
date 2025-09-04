@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Add GitHub Organization field to partner kanban -->
+        <record id="view_partner_kanban_github_org_indicator" model="ir.ui.view">
+            <field name="name">res.partner.kanban.github.org.indicator</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.res_partner_kanban_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//footer" position="before">
+                    <table class="table-sm" style="font-size: 12px; margin: 0;" invisible="not is_organization">
+                        <tr>
+                            <td style="padding: 2px; width: 40px; vertical-align: unset;"><i class="fa fa-github"/> Organization:</td>
+                            <td style="padding: 2px;"><field name="is_organization" widget="boolean_toggle" readonly="1" nolabel="1"/></td>
+                        </tr>
+                    </table>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Add GitHub Organization field to partner list view -->
+        <record id="view_partner_tree_github_org_field" model="ir.ui.view">
+            <field name="name">res.partner.tree.github.org.field</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[last()]" position="after">
+                    <field name="is_organization" optional="hide" string="Github Org." widget="boolean_toggle" readonly="1"/>
+                </xpath>
+            </field>
+        </record>
+
+                        <!-- Action for GitHub Sync in More menu -->
+        <record id="action_sync_github_organizations" model="ir.actions.server">
+            <field name="name">Sync GitHub Organizations</field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="binding_model_id" ref="base.model_res_partner"/>
+            <field name="state">code</field>
+            <field name="code">
+if records.filtered(lambda r: r.access_token and r.platform == 'github' and r.is_autor):
+    for record in records.filtered(lambda r: r.access_token and r.platform == 'github' and r.is_autor):
+        action = record.action_sync_github_organizations()
+            </field>
+        </record>
+
+        <!-- Add filter and grouping to standard contacts search view -->
+        <record id="view_res_partner_filter_github_orgs" model="ir.ui.view">
+            <field name="name">res.partner.select.github.orgs</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <filter name="customer" position="after">
+                    <filter string="Organizations" name="github_organizations" 
+                            domain="[('is_organization', '=', True), ('platform', '=', 'github')]"/>
+                </filter>
+                <xpath expr="//group[@expand='0']" position="inside">
+                    <filter string="Parent Contact" name="group_by_parent" 
+                            context="{'group_by': 'parent_id'}" 
+                            groups="base.group_no_one"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo> 
